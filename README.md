@@ -4,6 +4,7 @@ This is a super cool fork of the SimpleX client, which is intended to prioritize
 - Better defaults (prioritizing privacy more)
 - Better profile isolation
 - Room-centric approach to moderation
+- Random colors & avatars for incognito profiles
 - Receiver-enforced chat preferences
 - Chat preference spoofing
 - More control over client actions
