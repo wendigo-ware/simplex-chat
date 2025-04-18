@@ -1,6 +1,6 @@
 This is a super cool fork of the SimpleX client. It is intended to prioritize censorship resistance, privacy, security and user autonomy, along with a few quality of life improvements.
 
-### Planned changes
+## Planned changes
 
 **More censorship resistance:**
 - Evade media blocking and other censorship techniques
