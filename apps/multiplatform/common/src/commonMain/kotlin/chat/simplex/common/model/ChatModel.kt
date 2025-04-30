@@ -67,7 +67,7 @@ object ChatModel {
   val chatId = mutableStateOf<String?>(null)
   val openAroundItemId: MutableState<Long?> = mutableStateOf(null)
   val chatsContext = ChatsContext(null)
-  val reportsChatsContext = ChatsContext(MsgContentTag.Report)
+  //val reportsChatsContext = ChatsContext(MsgContentTag.Report)
   // declaration of chatsContext should be before any other variable that is taken from ChatsContext class and used in the model, otherwise, strange crash with NullPointerException for "this" parameter in random functions
   val chats: State<List<Chat>> = chatsContext.chats
   // rhId, chatId
@@ -172,31 +172,31 @@ object ChatModel {
 
   fun chatsForContent(contentTag: MsgContentTag?): State<SnapshotStateList<Chat>> = when(contentTag) {
     null -> chatsContext.chats
-    MsgContentTag.Report -> reportsChatsContext.chats
+    //MsgContentTag.Report -> reportsChatsContext.chats
     else -> TODO()
   }
 
   fun chatItemsForContent(contentTag: MsgContentTag?): State<SnapshotStateList<ChatItem>> = when(contentTag) {
     null -> chatsContext.chatItems
-    MsgContentTag.Report -> reportsChatsContext.chatItems
+    //MsgContentTag.Report -> reportsChatsContext.chatItems
     else -> TODO()
   }
 
   fun chatStateForContent(contentTag: MsgContentTag?): ActiveChatState = when(contentTag) {
     null -> chatsContext.chatState
-    MsgContentTag.Report -> reportsChatsContext.chatState
+    //MsgContentTag.Report -> reportsChatsContext.chatState
     else -> TODO()
   }
 
   fun chatItemsChangesListenerForContent(contentTag: MsgContentTag?): ChatItemsChangesListener? = when(contentTag) {
     null -> chatsContext.chatItemsChangesListener
-    MsgContentTag.Report -> reportsChatsContext.chatItemsChangesListener
+    //MsgContentTag.Report -> reportsChatsContext.chatItemsChangesListener
     else -> TODO()
   }
 
   fun setChatItemsChangeListenerForContent(listener: ChatItemsChangesListener?, contentTag: MsgContentTag?) = when(contentTag) {
     null -> chatsContext.chatItemsChangesListener = listener
-    MsgContentTag.Report -> reportsChatsContext.chatItemsChangesListener = listener
+    //MsgContentTag.Report -> reportsChatsContext.chatItemsChangesListener = listener
     else -> TODO()
   }
 
@@ -328,16 +328,16 @@ object ChatModel {
   suspend fun <T> withChats(contentTag: MsgContentTag? = null, action: suspend ChatsContext.() -> T): T = withContext(Dispatchers.Main) {
     when {
       contentTag == null -> chatsContext.action()
-      contentTag == MsgContentTag.Report -> reportsChatsContext.action()
+      //contentTag == MsgContentTag.Report -> reportsChatsContext.action()
       else -> TODO()
     }
   }
 
-  suspend fun <T> withReportsChatsIfOpen(action: suspend ChatsContext.() -> T) = withContext(Dispatchers.Main) {
-    if (ModalManager.end.hasModalOpen(ModalViewId.GROUP_REPORTS)) {
-      reportsChatsContext.action()
-    }
-  }
+  //suspend fun <T> withReportsChatsIfOpen(action: suspend ChatsContext.() -> T) = withContext(Dispatchers.Main) {
+  //  if (ModalManager.end.hasModalOpen(ModalViewId.GROUP_REPORTS)) {
+  //    reportsChatsContext.action()
+  //  }
+  //}
 
   class ChatsContext(private val contentTag: MsgContentTag?) {
     val chats = mutableStateOf(SnapshotStateList<Chat>())
@@ -600,9 +600,9 @@ object ChatModel {
           meta = item.meta.copy(itemDeleted = CIDeleted.Moderated(Clock.System.now(), byGroupMember = byMember)),
           content = if (groupInfo.fullGroupPreferences.fullDelete.on) newContent else item.content
         )
-        if (item.isActiveReport) {
-          decreaseGroupReportsCounter(rhId, groupInfo.id)
-        }
+        //if (item.isActiveReport) {
+        //  decreaseGroupReportsCounter(rhId, groupInfo.id)
+        //}
         return updatedItem
       }
 
@@ -891,37 +891,37 @@ object ChatModel {
       }
     }
 
-    fun increaseGroupReportsCounter(rhId: Long?, chatId: ChatId) {
-      changeGroupReportsCounter(rhId, chatId, 1)
-    }
+    //fun increaseGroupReportsCounter(rhId: Long?, chatId: ChatId) {
+    //  changeGroupReportsCounter(rhId, chatId, 1)
+    //}
 
-    fun decreaseGroupReportsCounter(rhId: Long?, chatId: ChatId, by: Int = 1) {
-      changeGroupReportsCounter(rhId, chatId, -by)
-    }
+    //fun decreaseGroupReportsCounter(rhId: Long?, chatId: ChatId, by: Int = 1) {
+    //  changeGroupReportsCounter(rhId, chatId, -by)
+    //}
 
-    private fun changeGroupReportsCounter(rhId: Long?, chatId: ChatId, by: Int = 0) {
-      if (by == 0) return
+    //private fun changeGroupReportsCounter(rhId: Long?, chatId: ChatId, by: Int = 0) {
+    //  if (by == 0) return
 
-      val i = getChatIndex(rhId, chatId)
-      if (i >= 0) {
-        val chat = chats.value[i]
-        chats[i] = chat.copy(
-          chatStats = chat.chatStats.copy(
-            reportsCount = (chat.chatStats.reportsCount + by).coerceAtLeast(0),
-          )
-        )
-        val wasReportsCount = chat.chatStats.reportsCount
-        val nowReportsCount = chats[i].chatStats.reportsCount
-        val by = if (wasReportsCount == 0 && nowReportsCount > 0) 1 else if (wasReportsCount > 0 && nowReportsCount == 0) -1 else 0
-        changeGroupReportsTagNoContentTag(by)
-      }
-    }
+    //  val i = getChatIndex(rhId, chatId)
+    //  if (i >= 0) {
+    //    val chat = chats.value[i]
+    //    chats[i] = chat.copy(
+    //      chatStats = chat.chatStats.copy(
+    //        reportsCount = (chat.chatStats.reportsCount + by).coerceAtLeast(0),
+    //      )
+    //    )
+    //    val wasReportsCount = chat.chatStats.reportsCount
+    //    val nowReportsCount = chats[i].chatStats.reportsCount
+    //    val by = if (wasReportsCount == 0 && nowReportsCount > 0) 1 else if (wasReportsCount > 0 && nowReportsCount == 0) -1 else 0
+    //    changeGroupReportsTagNoContentTag(by)
+    //  }
+    //}
 
-    private fun changeGroupReportsTagNoContentTag(by: Int = 0) {
-      if (by == 0 || contentTag != null) return
-      presetTags[PresetTagKind.GROUP_REPORTS] = kotlin.math.max(0, (presetTags[PresetTagKind.GROUP_REPORTS] ?: 0) + by)
-      clearActiveChatFilterIfNeeded()
-    }
+    //private fun changeGroupReportsTagNoContentTag(by: Int = 0) {
+    //  if (by == 0 || contentTag != null) return
+    //  presetTags[PresetTagKind.GROUP_REPORTS] = kotlin.math.max(0, (presetTags[PresetTagKind.GROUP_REPORTS] ?: 0) + by)
+    //  clearActiveChatFilterIfNeeded()
+    //}
   }
 
   fun clearActiveChatFilterIfNeeded() {
@@ -1289,7 +1289,7 @@ data class Chat(
     val unreadCount: Int = 0,
     val unreadMentions: Int = 0,
     // actual only via getChats() and getChat(.initial), otherwise, zero
-    val reportsCount: Int = 0,
+    //val reportsCount: Int = 0,
     val minUnreadItemId: Long = 0,
     // actual only via getChats(), otherwise, false
     val unreadChat: Boolean = false
@@ -1834,7 +1834,7 @@ data class GroupInfo (
       GroupFeature.Voice -> p.voice.on(membership)
       GroupFeature.Files -> p.files.on(membership)
       GroupFeature.SimplexLinks -> p.simplexLinks.on(membership)
-      GroupFeature.Reports -> p.reports.on
+      //GroupFeature.Reports -> p.reports.on
       GroupFeature.History -> p.history.on
     }
   }
@@ -2512,13 +2512,13 @@ data class ChatItem (
       else -> true
     }
 
-  val isReport: Boolean get() = when (content) {
-    is CIContent.SndMsgContent, is CIContent.RcvMsgContent ->
-      content.msgContent is MsgContent.MCReport
-    else -> false
-  }
+  //val isReport: Boolean get() = when (content) {
+  //  is CIContent.SndMsgContent, is CIContent.RcvMsgContent ->
+  //    content.msgContent is MsgContent.MCReport
+  //  else -> false
+  //}
 
-  val isActiveReport: Boolean get() = isReport && !isDeletedContent && meta.itemDeleted == null
+  //val isActiveReport: Boolean get() = isReport && !isDeletedContent && meta.itemDeleted == null
 
   val canBeDeletedForSelf: Boolean
     get() = (content.msgContent != null && !meta.isLive) || meta.itemDeleted != null || isDeletedContent || mergeCategory != null || showLocalDelete
@@ -2781,7 +2781,7 @@ fun MutableState<SnapshotStateList<ChatItem>>.removeAllAndNotify(block: (ChatIte
   }
   if (toRemove.isNotEmpty()) {
     chatModel.chatsContext.chatItemsChangesListener?.removed(toRemove, value)
-    chatModel.reportsChatsContext.chatItemsChangesListener?.removed(toRemove, value)
+    //chatModel.reportsChatsContext.chatItemsChangesListener?.removed(toRemove, value)
   }
 }
 
@@ -2816,7 +2816,7 @@ fun MutableState<SnapshotStateList<Chat>>.clear() {
 fun MutableState<SnapshotStateList<ChatItem>>.clearAndNotify() {
   value = SnapshotStateList()
   chatModel.chatsContext.chatItemsChangesListener?.cleared()
-  chatModel.reportsChatsContext.chatItemsChangesListener?.cleared()
+  //chatModel.reportsChatsContext.chatItemsChangesListener?.cleared()
 }
 
 fun <T> State<SnapshotStateList<T>>.asReversed(): MutableList<T> = value.asReversed()
@@ -3758,7 +3758,7 @@ sealed class MsgContent {
   @Serializable(with = MsgContentSerializer::class) class MCVideo(override val text: String, val image: String, val duration: Int): MsgContent()
   @Serializable(with = MsgContentSerializer::class) class MCVoice(override val text: String, val duration: Int): MsgContent()
   @Serializable(with = MsgContentSerializer::class) class MCFile(override val text: String): MsgContent()
-  @Serializable(with = MsgContentSerializer::class) class MCReport(override val text: String, val reason: ReportReason): MsgContent()
+  //@Serializable(with = MsgContentSerializer::class) class MCReport(override val text: String, val reason: ReportReason): MsgContent()
   @Serializable(with = MsgContentSerializer::class) class MCUnknown(val type: String? = null, override val text: String, val json: JsonElement): MsgContent()
 
   val isVoice: Boolean get() =
@@ -3835,10 +3835,10 @@ object MsgContentSerializer : KSerializer<MsgContent> {
     element("MCFile", buildClassSerialDescriptor("MCFile") {
       element<String>("text")
     })
-    element("MCReport", buildClassSerialDescriptor("MCReport") {
-      element<String>("text")
-      element<ReportReason>("reason")
-    })
+    //element("MCReport", buildClassSerialDescriptor("MCReport") {
+    //  element<String>("text")
+    //  element<ReportReason>("reason")
+    //})
     element("MCUnknown", buildClassSerialDescriptor("MCUnknown"))
   }
 
@@ -3869,10 +3869,10 @@ object MsgContentSerializer : KSerializer<MsgContent> {
             MsgContent.MCVoice(text, duration)
           }
           "file" -> MsgContent.MCFile(text)
-          "report" -> {
-            val reason = Json.decodeFromString<ReportReason>(json["reason"].toString())
-            MsgContent.MCReport(text, reason)
-          }
+          //"report" -> {
+          //  val reason = Json.decodeFromString<ReportReason>(json["reason"].toString())
+          //  MsgContent.MCReport(text, reason)
+          //}
           else -> MsgContent.MCUnknown(t, text, json)
         }
       } else {
@@ -3921,12 +3921,12 @@ object MsgContentSerializer : KSerializer<MsgContent> {
           put("type", "file")
           put("text", value.text)
         }
-      is MsgContent.MCReport ->
-        buildJsonObject {
-          put("type", "report")
-          put("text", value.text)
-          put("reason", json.encodeToJsonElement(value.reason))
-        }
+      //is MsgContent.MCReport ->
+      //  buildJsonObject {
+      //    put("type", "report")
+      //    put("text", value.text)
+      //    put("reason", json.encodeToJsonElement(value.reason))
+      //  }
       is MsgContent.MCUnknown -> value.json
     }
     encoder.encodeJsonElement(json)
@@ -3941,7 +3941,7 @@ enum class MsgContentTag {
   @SerialName("video") Video,
   @SerialName("voice") Voice,
   @SerialName("file") File,
-  @SerialName("report") Report,
+  //@SerialName("report") Report,
 }
 
 @Serializable
@@ -4039,56 +4039,56 @@ enum class FormatColor(val color: String) {
 }
 
 
-@Serializable(with = ReportReasonSerializer::class)
-sealed class ReportReason {
-  @Serializable @SerialName("spam") object Spam: ReportReason()
-  @Serializable @SerialName("illegal") object Illegal: ReportReason()
-  @Serializable @SerialName("community") object Community: ReportReason()
-  @Serializable @SerialName("profile") object Profile: ReportReason()
-  @Serializable @SerialName("other") object Other: ReportReason()
-  @Serializable @SerialName("unknown") data class Unknown(val type: String): ReportReason()
-
-  companion object {
-    val supportedReasons: List<ReportReason> = listOf(Spam, Illegal, Community, Profile, Other)
-  }
-
-  val text: String get() = when (this) {
-    Spam -> generalGetString(MR.strings.report_reason_spam)
-    Illegal -> generalGetString(MR.strings.report_reason_illegal)
-    Community -> generalGetString(MR.strings.report_reason_community)
-    Profile -> generalGetString(MR.strings.report_reason_profile)
-    Other -> generalGetString(MR.strings.report_reason_other)
-    is Unknown -> type
-  }
-}
-
-object ReportReasonSerializer : KSerializer<ReportReason> {
-  override val descriptor: SerialDescriptor =
-    PrimitiveSerialDescriptor("ReportReason", PrimitiveKind.STRING)
-
-  override fun deserialize(decoder: Decoder): ReportReason {
-    return when (val value = decoder.decodeString()) {
-      "spam" -> ReportReason.Spam
-      "illegal" -> ReportReason.Illegal
-      "community" -> ReportReason.Community
-      "profile" -> ReportReason.Profile
-      "other" -> ReportReason.Other
-      else -> ReportReason.Unknown(value)
-    }
-  }
-
-  override fun serialize(encoder: Encoder, value: ReportReason) {
-    val stringValue = when (value) {
-      is ReportReason.Spam -> "spam"
-      is ReportReason.Illegal -> "illegal"
-      is ReportReason.Community -> "community"
-      is ReportReason.Profile -> "profile"
-      is ReportReason.Other -> "other"
-      is ReportReason.Unknown -> value.type
-    }
-    encoder.encodeString(stringValue)
-  }
-}
+//@Serializable(with = ReportReasonSerializer::class)
+//sealed class ReportReason {
+//  @Serializable @SerialName("spam") object Spam: ReportReason()
+//  @Serializable @SerialName("illegal") object Illegal: ReportReason()
+//  @Serializable @SerialName("community") object Community: ReportReason()
+//  @Serializable @SerialName("profile") object Profile: ReportReason()
+//  @Serializable @SerialName("other") object Other: ReportReason()
+//  @Serializable @SerialName("unknown") data class Unknown(val type: String): ReportReason()
+//
+//  companion object {
+//    val supportedReasons: List<ReportReason> = listOf(Spam, Illegal, Community, Profile, Other)
+//  }
+//
+//  val text: String get() = when (this) {
+//    Spam -> generalGetString(MR.strings.report_reason_spam)
+//    Illegal -> generalGetString(MR.strings.report_reason_illegal)
+//    Community -> generalGetString(MR.strings.report_reason_community)
+//    Profile -> generalGetString(MR.strings.report_reason_profile)
+//    Other -> generalGetString(MR.strings.report_reason_other)
+//    is Unknown -> type
+//  }
+//}
+//
+//object ReportReasonSerializer : KSerializer<ReportReason> {
+//  override val descriptor: SerialDescriptor =
+//    PrimitiveSerialDescriptor("ReportReason", PrimitiveKind.STRING)
+//
+//  override fun deserialize(decoder: Decoder): ReportReason {
+//    return when (val value = decoder.decodeString()) {
+//      "spam" -> ReportReason.Spam
+//      "illegal" -> ReportReason.Illegal
+//      "community" -> ReportReason.Community
+//      "profile" -> ReportReason.Profile
+//      "other" -> ReportReason.Other
+//      else -> ReportReason.Unknown(value)
+//    }
+//  }
+//
+//  override fun serialize(encoder: Encoder, value: ReportReason) {
+//    val stringValue = when (value) {
+//      is ReportReason.Spam -> "spam"
+//      is ReportReason.Illegal -> "illegal"
+//      is ReportReason.Community -> "community"
+//      is ReportReason.Profile -> "profile"
+//      is ReportReason.Other -> "other"
+//      is ReportReason.Unknown -> value.type
+//    }
+//    encoder.encodeString(stringValue)
+//  }
+//}
 
 @Serializable
 class SndFileTransfer() {}

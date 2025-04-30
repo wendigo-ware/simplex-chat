@@ -94,23 +94,32 @@ private fun MergedMarkedDeletedText(chatItem: ChatItem, chatInfo: ChatInfo, reve
 }
 
 fun markedDeletedText(cItem: ChatItem, chatInfo: ChatInfo): String =
-  if (cItem.meta.itemDeleted != null && cItem.isReport) {
-    if (cItem.meta.itemDeleted is CIDeleted.Moderated && cItem.meta.itemDeleted.byGroupMember.groupMemberId != (chatInfo as? ChatInfo.Group)?.groupInfo?.membership?.groupMemberId) {
-      generalGetString(MR.strings.report_item_archived_by).format(cItem.meta.itemDeleted.byGroupMember.displayName)
-    } else {
-      generalGetString(MR.strings.report_item_archived)
-    }
-  }
-  else when (cItem.meta.itemDeleted) {
-    is CIDeleted.Moderated ->
-      String.format(generalGetString(MR.strings.moderated_item_description), cItem.meta.itemDeleted.byGroupMember.displayName)
-    is CIDeleted.Blocked ->
-      generalGetString(MR.strings.blocked_item_description)
-    is CIDeleted.BlockedByAdmin ->
-      generalGetString(MR.strings.blocked_by_admin_item_description)
-    is CIDeleted.Deleted, null ->
-      generalGetString(MR.strings.marked_deleted_description)
-  }
+  //if (cItem.meta.itemDeleted != null && cItem.isReport) {
+  //  if (cItem.meta.itemDeleted is CIDeleted.Moderated && cItem.meta.itemDeleted.byGroupMember.groupMemberId != (chatInfo as? ChatInfo.Group)?.groupInfo?.membership?.groupMemberId) {
+  //    generalGetString(MR.strings.report_item_archived_by).format(cItem.meta.itemDeleted.byGroupMember.displayName)
+  //  } else {
+  //    generalGetString(MR.strings.report_item_archived)
+  //  }
+  //}
+  //else when (cItem.meta.itemDeleted) {
+  //  is CIDeleted.Moderated ->
+  //    String.format(generalGetString(MR.strings.moderated_item_description), cItem.meta.itemDeleted.byGroupMember.displayName)
+  //  is CIDeleted.Blocked ->
+  //    generalGetString(MR.strings.blocked_item_description)
+  //  is CIDeleted.BlockedByAdmin ->
+  //    generalGetString(MR.strings.blocked_by_admin_item_description)
+  //  is CIDeleted.Deleted, null ->
+  //    generalGetString(MR.strings.marked_deleted_description)
+  //}
+  // Reporting removed: else block copied below
+  is CIDeleted.Moderated ->
+    String.format(generalGetString(MR.strings.moderated_item_description), cItem.meta.itemDeleted.byGroupMember.displayName)
+  is CIDeleted.Blocked ->
+    generalGetString(MR.strings.blocked_item_description)
+  is CIDeleted.BlockedByAdmin ->
+    generalGetString(MR.strings.blocked_by_admin_item_description)
+  is CIDeleted.Deleted, null ->
+    generalGetString(MR.strings.marked_deleted_description)
 
 @Preview/*(
   uiMode = Configuration.UI_MODE_NIGHT_YES,

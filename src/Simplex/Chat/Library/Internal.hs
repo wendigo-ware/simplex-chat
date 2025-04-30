@@ -315,7 +315,7 @@ quoteContent mc qmc ciFile_
       MCImage {} -> True
       MCVideo {} -> True
       MCVoice {} -> False
-      MCReport {} -> False
+      --MCReport {} -> False
       MCUnknown {} -> True
     qText = msgContentText qmc
     getFileName :: CIFile d -> String
@@ -327,14 +327,14 @@ prohibitedGroupContent :: GroupInfo -> GroupMember -> MsgContent -> Maybe Markdo
 prohibitedGroupContent gInfo@GroupInfo {membership = GroupMember {memberRole = userRole}} m mc ft file_ sent
   | isVoice mc && not (groupFeatureMemberAllowed SGFVoice m gInfo) = Just GFVoice
   | not (isVoice mc) && isJust file_ && not (groupFeatureMemberAllowed SGFFiles m gInfo) = Just GFFiles
-  | isReport mc && (badReportUser || not (groupFeatureAllowed SGFReports gInfo)) = Just GFReports
+  -- | isReport mc && (badReportUser || not (groupFeatureAllowed SGFReports gInfo)) = Just GFReports
   | prohibitedSimplexLinks gInfo m ft = Just GFSimplexLinks
   | otherwise = Nothing
-  where
-    -- admins cannot send reports, non-admins cannot receive reports
-    badReportUser
-      | sent = userRole >= GRModerator
-      | otherwise = userRole < GRModerator
+  --where
+  --  -- admins cannot send reports, non-admins cannot receive reports
+  --  badReportUser
+  --    | sent = userRole >= GRModerator
+  --    | otherwise = userRole < GRModerator
 
 prohibitedSimplexLinks :: GroupInfo -> GroupMember -> Maybe MarkdownList -> Bool
 prohibitedSimplexLinks gInfo m ft =

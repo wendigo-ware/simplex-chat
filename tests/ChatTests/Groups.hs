@@ -142,7 +142,7 @@ chatGroupTests = do
     it "re-create member contact after deletion, many groups" testRecreateMemberContactManyGroups
   describe "group message forwarding" $ do
     it "forward messages between invitee and introduced (x.msg.new)" testGroupMsgForward
-    it "forward reports to moderators, don't forward to members (x.msg.new, MCReport)" testGroupMsgForwardReport
+    --it "forward reports to moderators, don't forward to members (x.msg.new, MCReport)" testGroupMsgForwardReport
     it "deduplicate forwarded messages" testGroupMsgForwardDeduplicate
     it "forward message edit (x.msg.update)" testGroupMsgForwardEdit
     it "forward message reaction (x.msg.react)" testGroupMsgForwardReaction
@@ -183,8 +183,8 @@ chatGroupTests = do
     it "block multiple members" testBlockForAllMultipleMembers
   describe "group member inactivity" $ do
     it "mark member inactive on reaching quota" testGroupMemberInactive
-  describe "group member reports" $ do
-    it "should send report to group owner, admins and moderators, but not other users" testGroupMemberReports
+  --describe "group member reports" $ do
+  --  it "should send report to group owner, admins and moderators, but not other users" testGroupMemberReports
   describe "group member mentions" $ do
     it "should send and edit messages with member mentions" testMemberMention
     it "should forward and quote message updating mentioned member name" testForwardQuoteMention
@@ -1567,7 +1567,7 @@ testGroupDescription = testChat4 aliceProfile bobProfile cathProfile danProfile 
       alice <## "Voice messages: on"
       alice <## "Files and media: on"
       alice <## "SimpleX links: on"
-      alice <## "Member reports: on"
+      --alice <## "Member reports: on"
       alice <## "Recent history: on"
     bobAddedDan :: HasCallStack => TestCC -> IO ()
     bobAddedDan cc = do
@@ -4267,63 +4267,63 @@ testGroupMsgForward =
       cath <# "#team bob> hi there [>>]"
       cath <# "#team hey team"
 
-testGroupMsgForwardReport :: HasCallStack => TestParams -> IO ()
-testGroupMsgForwardReport =
-  testChat3 aliceProfile bobProfile cathProfile $
-    \alice bob cath -> do
-      setupGroupForwarding3 "team" alice bob cath
-
-      bob #> "#team hi there"
-      alice <# "#team bob> hi there"
-      cath <# "#team bob> hi there [>>]"
-
-      alice ##> "/mr team bob moderator"
-      concurrentlyN_
-        [ alice <## "#team: you changed the role of bob to moderator",
-          bob <## "#team: alice changed your role from admin to moderator",
-          cath <## "#team: alice changed the role of bob from admin to moderator"
-        ]
-
-      alice ##> "/mr team cath member"
-      concurrentlyN_
-        [ alice <## "#team: you changed the role of cath to member",
-          bob <## "#team: alice changed the role of cath from admin to member",
-          cath <## "#team: alice changed your role from admin to member"
-        ]
-      cath ##> "/report #team content hi there"
-      cath <# "#team > bob hi there"
-      cath <## "      report content"
-      concurrentlyN_
-        [ do
-            alice <# "#team cath> > bob hi there"
-            alice <## "      report content",
-          do
-            bob <# "#team cath!> > bob hi there [>>]"
-            bob <## "      report content [>>]"
-        ]
-
-      alice ##> "/mr team bob member"
-      concurrentlyN_
-        [ alice <## "#team: you changed the role of bob to member",
-          bob <## "#team: alice changed your role from moderator to member",
-          cath <## "#team: alice changed the role of bob from moderator to member"
-        ]
-
-      cath ##> "/report #team content hi there"
-      cath <# "#team > bob hi there"
-      cath <## "      report content"
-      concurrentlyN_
-        [ do
-            alice <# "#team cath> > bob hi there"
-            alice <## "      report content",
-          (bob </)
-        ]
-
-      -- regular messages are still forwarded
-
-      cath #> "#team hey team"
-      alice <# "#team cath> hey team"
-      bob <# "#team cath> hey team [>>]"
+--testGroupMsgForwardReport :: HasCallStack => TestParams -> IO ()
+--testGroupMsgForwardReport =
+--  testChat3 aliceProfile bobProfile cathProfile $
+--    \alice bob cath -> do
+--      setupGroupForwarding3 "team" alice bob cath
+--
+--      bob #> "#team hi there"
+--      alice <# "#team bob> hi there"
+--      cath <# "#team bob> hi there [>>]"
+--
+--      alice ##> "/mr team bob moderator"
+--      concurrentlyN_
+--        [ alice <## "#team: you changed the role of bob to moderator",
+--          bob <## "#team: alice changed your role from admin to moderator",
+--          cath <## "#team: alice changed the role of bob from admin to moderator"
+--        ]
+--
+--      alice ##> "/mr team cath member"
+--      concurrentlyN_
+--        [ alice <## "#team: you changed the role of cath to member",
+--          bob <## "#team: alice changed the role of cath from admin to member",
+--          cath <## "#team: alice changed your role from admin to member"
+--        ]
+--      cath ##> "/report #team content hi there"
+--      cath <# "#team > bob hi there"
+--      cath <## "      report content"
+--      concurrentlyN_
+--        [ do
+--            alice <# "#team cath> > bob hi there"
+--            alice <## "      report content",
+--          do
+--            bob <# "#team cath!> > bob hi there [>>]"
+--            bob <## "      report content [>>]"
+--        ]
+--
+--      alice ##> "/mr team bob member"
+--      concurrentlyN_
+--        [ alice <## "#team: you changed the role of bob to member",
+--          bob <## "#team: alice changed your role from moderator to member",
+--          cath <## "#team: alice changed the role of bob from moderator to member"
+--        ]
+--
+--      cath ##> "/report #team content hi there"
+--      cath <# "#team > bob hi there"
+--      cath <## "      report content"
+--      concurrentlyN_
+--        [ do
+--            alice <# "#team cath> > bob hi there"
+--            alice <## "      report content",
+--          (bob </)
+--        ]
+--
+--      -- regular messages are still forwarded
+--
+--      cath #> "#team hey team"
+--      alice <# "#team cath> hey team"
+--      bob <# "#team cath> hey team [>>]"
 
 setupGroupForwarding3 :: String -> TestCC -> TestCC -> TestCC -> IO ()
 setupGroupForwarding3 gName alice bob cath = do
@@ -6276,154 +6276,154 @@ testGroupMemberInactive ps = do
               }
         }
 
-testGroupMemberReports :: HasCallStack => TestParams -> IO ()
-testGroupMemberReports =
-  testChat4 aliceProfile bobProfile cathProfile danProfile $
-    \alice bob cath dan -> do
-      createGroup3 "jokes" alice bob cath
-      -- disableFullDeletion3 "jokes" alice bob cath
-      alice ##> "/mr jokes bob moderator"
-      concurrentlyN_
-        [ alice <## "#jokes: you changed the role of bob to moderator",
-          bob <## "#jokes: alice changed your role from admin to moderator",
-          cath <## "#jokes: alice changed the role of bob from admin to moderator"
-        ]
-      alice ##> "/mr jokes cath member"
-      concurrentlyN_
-        [ alice <## "#jokes: you changed the role of cath to member",
-          bob <## "#jokes: alice changed the role of cath from admin to member",
-          cath <## "#jokes: alice changed your role from admin to member"
-        ]
-      alice ##> "/create link #jokes"
-      gLink <- getGroupLink alice "jokes" GRMember True
-      dan ##> ("/c " <> gLink)
-      dan <## "connection request sent!"
-      concurrentlyN_
-        [ do
-            alice <## "dan (Daniel): accepting request to join group #jokes..."
-            alice <## "#jokes: dan joined the group",
-          do
-            dan <## "#jokes: joining the group..."
-            dan <## "#jokes: you joined the group"
-            dan <###
-              [ "#jokes: member bob (Bob) is connected",
-                "#jokes: member cath (Catherine) is connected"
-              ],
-          do
-            bob <## "#jokes: alice added dan (Daniel) to the group (connecting...)"
-            bob <## "#jokes: new member dan is connected",
-          do
-            cath <## "#jokes: alice added dan (Daniel) to the group (connecting...)"
-            cath <## "#jokes: new member dan is connected"
-        ]
-      cath #> "#jokes inappropriate joke"
-      concurrentlyN_
-        [ alice <# "#jokes cath> inappropriate joke",
-          bob <# "#jokes cath> inappropriate joke",
-          dan <# "#jokes cath> inappropriate joke"
-        ]
-      dan ##> "/report #jokes content inappropriate joke"
-      dan <# "#jokes > cath inappropriate joke"
-      dan <## "      report content"
-      concurrentlyN_
-        [ do
-            alice <# "#jokes dan> > cath inappropriate joke"
-            alice <## "      report content",
-          do
-            bob <# "#jokes dan> > cath inappropriate joke"
-            bob <## "      report content",
-          (cath </)
-        ]
-      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content")])
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content")])
-      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content")])
-      alice ##> "\\\\ #jokes cath inappropriate joke"
-      concurrentlyN_
-        [ do
-            alice <## "#jokes: 1 messages deleted by user"
-            alice <## "message marked deleted by you",
-          do
-            bob <# "#jokes cath> [marked deleted by alice] inappropriate joke"
-            bob <## "#jokes: 1 messages deleted by member alice",
-          cath <# "#jokes cath> [marked deleted by alice] inappropriate joke",
-          do
-            dan <# "#jokes cath> [marked deleted by alice] inappropriate joke"
-            dan <## "#jokes: 1 messages deleted by member alice"
-        ]
-      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]")])
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by alice]")])
-      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content [marked deleted by alice]")])
-      -- delete all reports locally
-      alice #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      bob #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      dan #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      cath #> "#jokes ok joke"
-      concurrentlyN_
-        [ alice <# "#jokes cath> ok joke",
-          bob <# "#jokes cath> ok joke",
-          dan <# "#jokes cath> ok joke"
-        ]
-      dan ##> "/report #jokes content ok joke"
-      dan <# "#jokes > cath ok joke"
-      dan <## "      report content"
-      dan ##> "/report #jokes spam ok joke"
-      dan <# "#jokes > cath ok joke"
-      dan <## "      report spam"
-      concurrentlyN_
-        [ do
-            alice <# "#jokes dan> > cath ok joke"
-            alice <## "      report content"
-            alice <# "#jokes dan> > cath ok joke"
-            alice <## "      report spam",
-          do
-            bob <# "#jokes dan> > cath ok joke"
-            bob <## "      report content"
-            bob <# "#jokes dan> > cath ok joke"
-            bob <## "      report spam",
-          (cath </)
-        ]
-      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
-      cath #$> ("/_get chat #1 content=report count=100", chat, [])
-      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content"), (1, "report spam")])
-      alice ##> "/_archive reports #1"
-      alice <## "#jokes: 2 messages deleted by user"
-      (bob </)
-      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]"), (0, "report spam [marked deleted by you]")])
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
-      bob ##> "/_archive reports #1"
-      bob <## "#jokes: 2 messages deleted by user"
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]"), (0, "report spam [marked deleted by you]")])
-      -- delete reports for all admins
-      alice #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      bob #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      dan #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
-      cath #> "#jokes ok joke 2"
-      concurrentlyN_
-        [ alice <# "#jokes cath> ok joke 2",
-          bob <# "#jokes cath> ok joke 2",
-          dan <# "#jokes cath> ok joke 2"
-        ]
-      dan ##> "/report #jokes content ok joke 2"
-      dan <# "#jokes > cath ok joke 2"
-      dan <## "      report content"
-      concurrentlyN_
-        [ do
-            alice <# "#jokes dan> > cath ok joke 2"
-            alice <## "      report content",
-          do
-            bob <# "#jokes dan> > cath ok joke 2"
-            bob <## "      report content",
-          (cath </)
-        ]
-      alice ##> "/last_item_id"
-      i :: ChatItemId <- read <$> getTermLine alice
-      alice ##> ("/_delete reports #1 " <> show i <> " broadcast")
-      alice <## "message marked deleted by you"
-      bob <# "#jokes dan> [marked deleted by alice] report content"
-      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]")])
-      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by alice]")])
-      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content")])
+--testGroupMemberReports :: HasCallStack => TestParams -> IO ()
+--testGroupMemberReports =
+--  testChat4 aliceProfile bobProfile cathProfile danProfile $
+--    \alice bob cath dan -> do
+--      createGroup3 "jokes" alice bob cath
+--      -- disableFullDeletion3 "jokes" alice bob cath
+--      alice ##> "/mr jokes bob moderator"
+--      concurrentlyN_
+--        [ alice <## "#jokes: you changed the role of bob to moderator",
+--          bob <## "#jokes: alice changed your role from admin to moderator",
+--          cath <## "#jokes: alice changed the role of bob from admin to moderator"
+--        ]
+--      alice ##> "/mr jokes cath member"
+--      concurrentlyN_
+--        [ alice <## "#jokes: you changed the role of cath to member",
+--          bob <## "#jokes: alice changed the role of cath from admin to member",
+--          cath <## "#jokes: alice changed your role from admin to member"
+--        ]
+--      alice ##> "/create link #jokes"
+--      gLink <- getGroupLink alice "jokes" GRMember True
+--      dan ##> ("/c " <> gLink)
+--      dan <## "connection request sent!"
+--      concurrentlyN_
+--        [ do
+--            alice <## "dan (Daniel): accepting request to join group #jokes..."
+--            alice <## "#jokes: dan joined the group",
+--          do
+--            dan <## "#jokes: joining the group..."
+--            dan <## "#jokes: you joined the group"
+--            dan <###
+--              [ "#jokes: member bob (Bob) is connected",
+--                "#jokes: member cath (Catherine) is connected"
+--              ],
+--          do
+--            bob <## "#jokes: alice added dan (Daniel) to the group (connecting...)"
+--            bob <## "#jokes: new member dan is connected",
+--          do
+--            cath <## "#jokes: alice added dan (Daniel) to the group (connecting...)"
+--            cath <## "#jokes: new member dan is connected"
+--        ]
+--      cath #> "#jokes inappropriate joke"
+--      concurrentlyN_
+--        [ alice <# "#jokes cath> inappropriate joke",
+--          bob <# "#jokes cath> inappropriate joke",
+--          dan <# "#jokes cath> inappropriate joke"
+--        ]
+--      dan ##> "/report #jokes content inappropriate joke"
+--      dan <# "#jokes > cath inappropriate joke"
+--      dan <## "      report content"
+--      concurrentlyN_
+--        [ do
+--            alice <# "#jokes dan> > cath inappropriate joke"
+--            alice <## "      report content",
+--          do
+--            bob <# "#jokes dan> > cath inappropriate joke"
+--            bob <## "      report content",
+--          (cath </)
+--        ]
+--      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content")])
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content")])
+--      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content")])
+--      alice ##> "\\\\ #jokes cath inappropriate joke"
+--      concurrentlyN_
+--        [ do
+--            alice <## "#jokes: 1 messages deleted by user"
+--            alice <## "message marked deleted by you",
+--          do
+--            bob <# "#jokes cath> [marked deleted by alice] inappropriate joke"
+--            bob <## "#jokes: 1 messages deleted by member alice",
+--          cath <# "#jokes cath> [marked deleted by alice] inappropriate joke",
+--          do
+--            dan <# "#jokes cath> [marked deleted by alice] inappropriate joke"
+--            dan <## "#jokes: 1 messages deleted by member alice"
+--        ]
+--      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]")])
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by alice]")])
+--      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content [marked deleted by alice]")])
+--      -- delete all reports locally
+--      alice #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      bob #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      dan #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      cath #> "#jokes ok joke"
+--      concurrentlyN_
+--        [ alice <# "#jokes cath> ok joke",
+--          bob <# "#jokes cath> ok joke",
+--          dan <# "#jokes cath> ok joke"
+--        ]
+--      dan ##> "/report #jokes content ok joke"
+--      dan <# "#jokes > cath ok joke"
+--      dan <## "      report content"
+--      dan ##> "/report #jokes spam ok joke"
+--      dan <# "#jokes > cath ok joke"
+--      dan <## "      report spam"
+--      concurrentlyN_
+--        [ do
+--            alice <# "#jokes dan> > cath ok joke"
+--            alice <## "      report content"
+--            alice <# "#jokes dan> > cath ok joke"
+--            alice <## "      report spam",
+--          do
+--            bob <# "#jokes dan> > cath ok joke"
+--            bob <## "      report content"
+--            bob <# "#jokes dan> > cath ok joke"
+--            bob <## "      report spam",
+--          (cath </)
+--        ]
+--      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
+--      cath #$> ("/_get chat #1 content=report count=100", chat, [])
+--      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content"), (1, "report spam")])
+--      alice ##> "/_archive reports #1"
+--      alice <## "#jokes: 2 messages deleted by user"
+--      (bob </)
+--      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]"), (0, "report spam [marked deleted by you]")])
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content"), (0, "report spam")])
+--      bob ##> "/_archive reports #1"
+--      bob <## "#jokes: 2 messages deleted by user"
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]"), (0, "report spam [marked deleted by you]")])
+--      -- delete reports for all admins
+--      alice #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      bob #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      dan #$> ("/clear #jokes", id, "#jokes: all messages are removed locally ONLY")
+--      cath #> "#jokes ok joke 2"
+--      concurrentlyN_
+--        [ alice <# "#jokes cath> ok joke 2",
+--          bob <# "#jokes cath> ok joke 2",
+--          dan <# "#jokes cath> ok joke 2"
+--        ]
+--      dan ##> "/report #jokes content ok joke 2"
+--      dan <# "#jokes > cath ok joke 2"
+--      dan <## "      report content"
+--      concurrentlyN_
+--        [ do
+--            alice <# "#jokes dan> > cath ok joke 2"
+--            alice <## "      report content",
+--          do
+--            bob <# "#jokes dan> > cath ok joke 2"
+--            bob <## "      report content",
+--          (cath </)
+--        ]
+--      alice ##> "/last_item_id"
+--      i :: ChatItemId <- read <$> getTermLine alice
+--      alice ##> ("/_delete reports #1 " <> show i <> " broadcast")
+--      alice <## "message marked deleted by you"
+--      bob <# "#jokes dan> [marked deleted by alice] report content"
+--      alice #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by you]")])
+--      bob #$> ("/_get chat #1 content=report count=100", chat, [(0, "report content [marked deleted by alice]")])
+--      dan #$> ("/_get chat #1 content=report count=100", chat, [(1, "report content")])
 
 testMemberMention :: HasCallStack => TestParams -> IO ()
 testMemberMention =

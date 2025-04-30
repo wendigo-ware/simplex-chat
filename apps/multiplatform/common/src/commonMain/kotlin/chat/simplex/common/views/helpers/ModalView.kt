@@ -85,7 +85,14 @@ class ModalData(val keyboardCoversBar: Boolean = true) {
 }
 
 enum class ModalViewId {
-  GROUP_REPORTS
+  // Reporting removed: wut???
+  // I'll be honest wichu... This shit confuses me. I mean, I know nobody
+  // understands this confusing, poorly documented codebase. But what's going on
+  // here? I've determined that this does indeed have something to do with
+  // content reporting. But where is `GROUP_REPORTS` defined? Why is it the only
+  // thing in this class? Why does this class otherwise have no obvious
+  // connection to content reports?
+  //GROUP_REPORTS
 }
 
 class ModalManager(private val placement: ModalPlacement? = null) {

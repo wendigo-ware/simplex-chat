@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.*
 import chat.simplex.common.model.*
 import chat.simplex.common.model.ChatModel.controller
 import chat.simplex.common.model.ChatModel.withChats
-import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
+//import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
 import chat.simplex.common.ui.theme.*
 import chat.simplex.common.views.chat.*
 import chat.simplex.common.views.helpers.*
@@ -66,9 +66,9 @@ fun GroupMemberInfoView(
         withChats {
           updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
         }
-        withReportsChatsIfOpen {
-          updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
-        }
+        //withReportsChatsIfOpen {
+        //  updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
+        //}
         close.invoke()
       }
     }
@@ -152,9 +152,9 @@ fun GroupMemberInfoView(
               withChats {
                 updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
               }
-              withReportsChatsIfOpen {
-                updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
-              }
+              //withReportsChatsIfOpen {
+              //  updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
+              //}
               close.invoke()
             }
           }
@@ -169,9 +169,9 @@ fun GroupMemberInfoView(
               withChats {
                 updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
               }
-              withReportsChatsIfOpen {
-                updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
-              }
+              //withReportsChatsIfOpen {
+              //  updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
+              //}
               close.invoke()
             }
           }
@@ -189,9 +189,9 @@ fun GroupMemberInfoView(
               withChats {
                 updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
               }
-              withReportsChatsIfOpen {
-                updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
-              }
+              //withReportsChatsIfOpen {
+              //  updateGroupMemberConnectionStats(rhId, groupInfo, r.first, r.second)
+              //}
               close.invoke()
             }
           }
@@ -215,9 +215,9 @@ fun GroupMemberInfoView(
                   withChats {
                     upsertGroupMember(rhId, groupInfo, copy)
                   }
-                  withReportsChatsIfOpen {
-                    upsertGroupMember(rhId, groupInfo, copy)
-                  }
+                  //withReportsChatsIfOpen {
+                  //  upsertGroupMember(rhId, groupInfo, copy)
+                  //}
                   r
                 }
               },
@@ -252,11 +252,11 @@ fun removeMemberDialog(rhId: Long?, groupInfo: GroupInfo, member: GroupMember, c
               upsertGroupMember(rhId, groupInfo, removedMember)
             }
           }
-          withReportsChatsIfOpen {
-            removedMembers.forEach { removedMember ->
-              upsertGroupMember(rhId, groupInfo, removedMember)
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  removedMembers.forEach { removedMember ->
+          //    upsertGroupMember(rhId, groupInfo, removedMember)
+          //  }
+          //}
         }
         close?.invoke()
       }
@@ -702,11 +702,11 @@ fun updateMembersRole(newRole: GroupMemberRole, rhId: Long?, groupInfo: GroupInf
           upsertGroupMember(rhId, groupInfo, member)
         }
       }
-      withReportsChatsIfOpen {
-        members.forEach { member ->
-          upsertGroupMember(rhId, groupInfo, member)
-        }
-      }
+      //withReportsChatsIfOpen {
+      //  members.forEach { member ->
+      //    upsertGroupMember(rhId, groupInfo, member)
+      //  }
+      //}
       onSuccess()
     }.onFailure {
       onFailure()
@@ -801,9 +801,9 @@ fun updateMemberSettings(rhId: Long?, gInfo: GroupInfo, member: GroupMember, mem
       withChats {
         upsertGroupMember(rhId, gInfo, member.copy(memberSettings = memberSettings))
       }
-      withReportsChatsIfOpen {
-        upsertGroupMember(rhId, gInfo, member.copy(memberSettings = memberSettings))
-      }
+      //withReportsChatsIfOpen {
+      //  upsertGroupMember(rhId, gInfo, member.copy(memberSettings = memberSettings))
+      //}
     }
   }
 }
@@ -862,11 +862,11 @@ fun blockMemberForAll(rhId: Long?, gInfo: GroupInfo, memberIds: List<Long>, bloc
         upsertGroupMember(rhId, gInfo, updatedMember)
       }
     }
-    withReportsChatsIfOpen {
-      updatedMembers.forEach { updatedMember ->
-        upsertGroupMember(rhId, gInfo, updatedMember)
-      }
-    }
+    //withReportsChatsIfOpen {
+    //  updatedMembers.forEach { updatedMember ->
+    //    upsertGroupMember(rhId, gInfo, updatedMember)
+    //  }
+    //}
     onSuccess()
   }
 }

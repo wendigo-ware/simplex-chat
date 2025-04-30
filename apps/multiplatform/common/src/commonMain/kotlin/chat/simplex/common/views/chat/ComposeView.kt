@@ -58,7 +58,7 @@ sealed class ComposeContextItem {
   @Serializable class QuotedItem(val chatItem: ChatItem): ComposeContextItem()
   @Serializable class EditingItem(val chatItem: ChatItem): ComposeContextItem()
   @Serializable class ForwardingItems(val chatItems: List<ChatItem>, val fromChatInfo: ChatInfo): ComposeContextItem()
-  @Serializable class ReportedItem(val chatItem: ChatItem, val reason: ReportReason): ComposeContextItem()
+  //@Serializable class ReportedItem(val chatItem: ChatItem, val reason: ReportReason): ComposeContextItem()
 }
 
 @Serializable
@@ -131,28 +131,30 @@ data class ComposeState(
       is ComposeContextItem.ForwardingItems -> true
       else -> false
     }
-  val reporting: Boolean
-    get() = when (contextItem) {
-      is ComposeContextItem.ReportedItem -> true
-      else -> false
-    }
-  val submittingValidReport: Boolean
-    get() = when (contextItem) {
-      is ComposeContextItem.ReportedItem -> {
-        when (contextItem.reason) {
-          is ReportReason.Other -> message.text.isNotEmpty()
-          else -> true
-        }
-      }
-      else -> false
-    }
+  //val reporting: Boolean
+  //  get() = when (contextItem) {
+  //    is ComposeContextItem.ReportedItem -> true
+  //    else -> false
+  //  }
+  //val submittingValidReport: Boolean
+  //  get() = when (contextItem) {
+  //    is ComposeContextItem.ReportedItem -> {
+  //      when (contextItem.reason) {
+  //        is ReportReason.Other -> message.text.isNotEmpty()
+  //        else -> true
+  //      }
+  //    }
+  //    else -> false
+  //  }
   val sendEnabled: () -> Boolean
     get() = {
       val hasContent = when (preview) {
         is ComposePreview.MediaPreview -> true
         is ComposePreview.VoicePreview -> true
         is ComposePreview.FilePreview -> true
-        else -> message.text.isNotEmpty() || forwarding || liveMessage != null || submittingValidReport
+        //else -> message.text.isNotEmpty() || forwarding || liveMessage != null || submittingValidReport
+	// Reporting removed: modified line added below
+        else -> message.text.isNotEmpty() || forwarding || liveMessage != null
       }
       hasContent && !inProgress
     }
@@ -176,7 +178,9 @@ data class ComposeState(
 
   val attachmentDisabled: Boolean
     get() {
-      if (editing || forwarding || liveMessage != null || inProgress || reporting) return true
+      //if (editing || forwarding || liveMessage != null || inProgress || reporting) return true
+      // Reporting removed: modified line added below
+      if (editing || forwarding || liveMessage != null || inProgress) return true
       return when (preview) {
         ComposePreview.NoPreview -> false
         is ComposePreview.CLinkPreview -> false
@@ -195,8 +199,10 @@ data class ComposeState(
 
   val placeholder: String
     get() = when (contextItem) {
-      is ComposeContextItem.ReportedItem -> contextItem.reason.text
-      else -> generalGetString(MR.strings.compose_message_placeholder)
+      //is ComposeContextItem.ReportedItem -> contextItem.reason.text
+      //else -> generalGetString(MR.strings.compose_message_placeholder)
+      // Reporting removed: else code copied below
+      generalGetString(MR.strings.compose_message_placeholder)
     }
 
   val empty: Boolean
@@ -245,7 +251,7 @@ fun chatItemPreview(chatItem: ChatItem): ComposePreview {
     is MsgContent.MCVideo -> ComposePreview.MediaPreview(images = listOf(mc.image), listOf(UploadContent.SimpleImage(getAppFileUri(fileName))))
     is MsgContent.MCVoice -> ComposePreview.VoicePreview(voice = fileName, mc.duration / 1000, true)
     is MsgContent.MCFile -> ComposePreview.FilePreview(fileName, getAppFileUri(fileName))
-    is MsgContent.MCReport -> ComposePreview.NoPreview
+    //is MsgContent.MCReport -> ComposePreview.NoPreview
     is MsgContent.MCUnknown, null -> ComposePreview.NoPreview
   }
 }
@@ -559,23 +565,23 @@ fun ComposeView(
         is MsgContent.MCVideo -> MsgContent.MCVideo(msgText, image = msgContent.image, duration = msgContent.duration)
         is MsgContent.MCVoice -> MsgContent.MCVoice(msgText, duration = msgContent.duration)
         is MsgContent.MCFile -> MsgContent.MCFile(msgText)
-        is MsgContent.MCReport -> MsgContent.MCReport(msgText, reason = msgContent.reason)
+        //is MsgContent.MCReport -> MsgContent.MCReport(msgText, reason = msgContent.reason)
         is MsgContent.MCUnknown -> MsgContent.MCUnknown(type = msgContent.type, text = msgText, json = msgContent.json)
       }
     }
 
-    suspend fun sendReport(reportReason: ReportReason, chatItemId: Long): List<ChatItem>? {
-      val cItems = chatModel.controller.apiReportMessage(chat.remoteHostId, chat.chatInfo.apiId, chatItemId, reportReason, msgText)
-      if (cItems != null) {
-        withChats {
-          cItems.forEach { chatItem ->
-            addChatItem(chat.remoteHostId, chat.chatInfo, chatItem.chatItem)
-          }
-        }
-      }
+    //suspend fun sendReport(reportReason: ReportReason, chatItemId: Long): List<ChatItem>? {
+    //  val cItems = chatModel.controller.apiReportMessage(chat.remoteHostId, chat.chatInfo.apiId, chatItemId, reportReason, msgText)
+    //  if (cItems != null) {
+    //    withChats {
+    //      cItems.forEach { chatItem ->
+    //        addChatItem(chat.remoteHostId, chat.chatInfo, chatItem.chatItem)
+    //      }
+    //    }
+    //  }
 
-      return cItems?.map { it.chatItem }
-    }
+    //  return cItems?.map { it.chatItem }
+    //}
 
     suspend fun sendMemberContactInvitation() {
       val mc = checkLinkPreview()
@@ -642,8 +648,8 @@ fun ComposeView(
     } else if (liveMessage != null && liveMessage.sent) {
       val updatedMessage = updateMessage(liveMessage.chatItem, chat, live)
       sent = if (updatedMessage != null) listOf(updatedMessage) else null
-    } else if (cs.contextItem is ComposeContextItem.ReportedItem) {
-      sent = sendReport(cs.contextItem.reason, cs.contextItem.chatItem.id)
+    //} else if (cs.contextItem is ComposeContextItem.ReportedItem) {
+    //  sent = sendReport(cs.contextItem.reason, cs.contextItem.chatItem.id)
     } else {
       val msgs: ArrayList<MsgContent> = ArrayList()
       val files: ArrayList<CryptoFile> = ArrayList()
@@ -935,24 +941,24 @@ fun ComposeView(
     }
   }
 
-  @Composable
-  fun ReportReasonView(reason: ReportReason) {
-    val reportText = when (reason) {
-      is ReportReason.Spam -> generalGetString(MR.strings.report_compose_reason_header_spam)
-      is ReportReason.Illegal -> generalGetString(MR.strings.report_compose_reason_header_illegal)
-      is ReportReason.Profile -> generalGetString(MR.strings.report_compose_reason_header_profile)
-      is ReportReason.Community -> generalGetString(MR.strings.report_compose_reason_header_community)
-      is ReportReason.Other -> generalGetString(MR.strings.report_compose_reason_header_other)
-      is ReportReason.Unknown -> null // should never happen
-    }
+  //@Composable
+  //fun ReportReasonView(reason: ReportReason) {
+  //  val reportText = when (reason) {
+  //    is ReportReason.Spam -> generalGetString(MR.strings.report_compose_reason_header_spam)
+  //    is ReportReason.Illegal -> generalGetString(MR.strings.report_compose_reason_header_illegal)
+  //    is ReportReason.Profile -> generalGetString(MR.strings.report_compose_reason_header_profile)
+  //    is ReportReason.Community -> generalGetString(MR.strings.report_compose_reason_header_community)
+  //    is ReportReason.Other -> generalGetString(MR.strings.report_compose_reason_header_other)
+  //    is ReportReason.Unknown -> null // should never happen
+  //  }
 
-    if (reportText != null) {
-      val color = MaterialTheme.appColors.receivedQuote
-      Row(Modifier.fillMaxWidth().background(color).padding(horizontal = DEFAULT_PADDING_HALF, vertical = DEFAULT_PADDING_HALF * 1.5f), verticalAlignment = Alignment.CenterVertically) {
-        Text(reportText, fontStyle = FontStyle.Italic, fontSize = 12.sp)
-      }
-    }
-  }
+  //  if (reportText != null) {
+  //    val color = MaterialTheme.appColors.receivedQuote
+  //    Row(Modifier.fillMaxWidth().background(color).padding(horizontal = DEFAULT_PADDING_HALF, vertical = DEFAULT_PADDING_HALF * 1.5f), verticalAlignment = Alignment.CenterVertically) {
+  //      Text(reportText, fontStyle = FontStyle.Italic, fontSize = 12.sp)
+  //    }
+  //  }
+  //}
 
   @Composable
   fun contextItemView() {
@@ -967,9 +973,9 @@ fun ComposeView(
       is ComposeContextItem.ForwardingItems -> ContextItemView(contextItem.chatItems, painterResource(MR.images.ic_forward), showSender = false,  chatInfo = chat.chatInfo) {
         composeState.value = composeState.value.copy(contextItem = ComposeContextItem.NoContextItem)
       }
-      is ComposeContextItem.ReportedItem -> ContextItemView(listOf(contextItem.chatItem), painterResource(MR.images.ic_flag), chatInfo = chat.chatInfo, contextIconColor = Color.Red) {
-        composeState.value = composeState.value.copy(contextItem = ComposeContextItem.NoContextItem)
-      }
+      //is ComposeContextItem.ReportedItem -> ContextItemView(listOf(contextItem.chatItem), painterResource(MR.images.ic_flag), chatInfo = chat.chatInfo, contextIconColor = Color.Red) {
+      //  composeState.value = composeState.value.copy(contextItem = ComposeContextItem.NoContextItem)
+      //}
     }
   }
 
@@ -1008,9 +1014,9 @@ fun ComposeView(
       ComposeContextInvitingContactMemberView()
     }
     val ctx = composeState.value.contextItem
-    if (ctx is ComposeContextItem.ReportedItem) {
-      ReportReasonView(ctx.reason)
-    }
+    //if (ctx is ComposeContextItem.ReportedItem) {
+    //  ReportReasonView(ctx.reason)
+    //}
     val simplexLinkProhibited = hasSimplexLink.value && !chat.groupFeatureEnabled(GroupFeature.SimplexLinks)
     val fileProhibited = composeState.value.attachmentPreview && !chat.groupFeatureEnabled(GroupFeature.Files)
     val voiceProhibited = composeState.value.preview is ComposePreview.VoicePreview && !chat.chatInfo.featureEnabled(ChatFeature.Voice)

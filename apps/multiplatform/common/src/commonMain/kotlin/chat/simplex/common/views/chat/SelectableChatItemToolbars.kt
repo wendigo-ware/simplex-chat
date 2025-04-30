@@ -69,7 +69,7 @@ fun SelectedItemsButtonsToolbar(
 ) {
   val deleteEnabled = remember { mutableStateOf(false) }
   val deleteForEveryoneEnabled = remember { mutableStateOf(false) }
-  val canArchiveReports = remember { mutableStateOf(false) }
+  //val canArchiveReports = remember { mutableStateOf(false) }
   val canModerate = remember { mutableStateOf(false) }
   val moderateEnabled = remember { mutableStateOf(false) }
   val forwardEnabled = remember { mutableStateOf(false) }
@@ -92,7 +92,9 @@ fun SelectedItemsButtonsToolbar(
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically
     ) {
-      IconButton({ if (canArchiveReports.value) archiveItems() else deleteItems(deleteForEveryoneEnabled.value) }, enabled = deleteEnabled.value && !deleteCountProhibited.value) {
+      //IconButton({ if (canArchiveReports.value) archiveItems() else deleteItems(deleteForEveryoneEnabled.value) }, enabled = deleteEnabled.value && !deleteCountProhibited.value) {
+      // Reporting removed; no canArchiveReports. Next line added:
+      IconButton({ deleteItems(deleteForEveryoneEnabled.value) }, enabled = deleteEnabled.value && !deleteCountProhibited.value) {
         Icon(
           painterResource(MR.images.ic_delete),
           null,
@@ -123,7 +125,9 @@ fun SelectedItemsButtonsToolbar(
   }
   val chatItems = remember { derivedStateOf { chatModel.chatItemsForContent(contentTag).value } }
   LaunchedEffect(chatInfo, chatItems.value, selectedChatItems.value) {
-    recheckItems(chatInfo, chatItems.value, selectedChatItems, deleteEnabled, deleteForEveryoneEnabled, canArchiveReports, canModerate, moderateEnabled, forwardEnabled, deleteCountProhibited, forwardCountProhibited)
+    //recheckItems(chatInfo, chatItems.value, selectedChatItems, deleteEnabled, deleteForEveryoneEnabled, canArchiveReports, canModerate, moderateEnabled, forwardEnabled, deleteCountProhibited, forwardCountProhibited)
+    // Reporting removed; no canArchiveReports. Added next line:
+    recheckItems(chatInfo, chatItems.value, selectedChatItems, deleteEnabled, deleteForEveryoneEnabled canModerate, moderateEnabled, forwardEnabled, deleteCountProhibited, forwardCountProhibited)
   }
 }
 
@@ -132,7 +136,7 @@ private fun recheckItems(chatInfo: ChatInfo,
   selectedChatItems: MutableState<Set<Long>?>,
   deleteEnabled: MutableState<Boolean>,
   deleteForEveryoneEnabled: MutableState<Boolean>,
-  canArchiveReports:  MutableState<Boolean>,
+  //canArchiveReports:  MutableState<Boolean>,
   canModerate: MutableState<Boolean>,
   moderateEnabled: MutableState<Boolean>,
   forwardEnabled: MutableState<Boolean>,
@@ -146,7 +150,7 @@ private fun recheckItems(chatInfo: ChatInfo,
   val selected = selectedChatItems.value ?: return
   var rDeleteEnabled = true
   var rDeleteForEveryoneEnabled = true
-  var rCanArchiveReports = true
+  //var rCanArchiveReports = true
   var rModerateEnabled = true
   var rOnlyOwnGroupItems = true
   var rForwardEnabled = true
@@ -154,18 +158,26 @@ private fun recheckItems(chatInfo: ChatInfo,
   for (ci in chatItems) {
     if (selected.contains(ci.id)) {
       rDeleteEnabled = rDeleteEnabled && ci.canBeDeletedForSelf
-      rDeleteForEveryoneEnabled = rDeleteForEveryoneEnabled && ci.meta.deletable && !ci.localNote && !ci.isReport
-      rCanArchiveReports = rCanArchiveReports && ci.isActiveReport && ci.chatDir !is CIDirection.GroupSnd && chatInfo is ChatInfo.Group && chatInfo.groupInfo.membership.memberRole >= GroupMemberRole.Moderator
-      rOnlyOwnGroupItems = rOnlyOwnGroupItems && ci.chatDir is CIDirection.GroupSnd && !ci.isReport
-      rModerateEnabled = rModerateEnabled && ci.content.msgContent != null && ci.memberToModerate(chatInfo) != null && !ci.isReport
-      rForwardEnabled = rForwardEnabled && ci.content.msgContent != null && ci.meta.itemDeleted == null && !ci.isLiveDummy && !ci.isReport
+      //rDeleteForEveryoneEnabled = rDeleteForEveryoneEnabled && ci.meta.deletable && !ci.localNote && !ci.isReport
+      // Reporting removed; no ci.isReport. Next line added:
+      rDeleteForEveryoneEnabled = rDeleteForEveryoneEnabled && ci.meta.deletable && !ci.localNote
+      //rCanArchiveReports = rCanArchiveReports && ci.isActiveReport && ci.chatDir !is CIDirection.GroupSnd && chatInfo is ChatInfo.Group && chatInfo.groupInfo.membership.memberRole >= GroupMemberRole.Moderator
+      //rOnlyOwnGroupItems = rOnlyOwnGroupItems && ci.chatDir is CIDirection.GroupSnd && !ci.isReport
+      // Reporting removed; no ci.isReport. Next line added:
+      rOnlyOwnGroupItems = rOnlyOwnGroupItems && ci.chatDir is CIDirection.GroupSnd
+      //rModerateEnabled = rModerateEnabled && ci.content.msgContent != null && ci.memberToModerate(chatInfo) != null && !ci.isReport
+      // Reporting removed; no ci.isReport. Next line added:
+      rModerateEnabled = rModerateEnabled && ci.content.msgContent != null && ci.memberToModerate(chatInfo) != null
+      //rForwardEnabled = rForwardEnabled && ci.content.msgContent != null && ci.meta.itemDeleted == null && !ci.isLiveDummy && !ci.isReport
+      // Reporting removed; no ci.isReport. Next line added:
+      rForwardEnabled = rForwardEnabled && ci.content.msgContent != null && ci.meta.itemDeleted == null && !ci.isLiveDummy
       rSelectedChatItems.add(ci.id) // we are collecting new selected items here to account for any changes in chat items list
     }
   }
   rModerateEnabled = rModerateEnabled && !rOnlyOwnGroupItems
   deleteEnabled.value = rDeleteEnabled
   deleteForEveryoneEnabled.value = rDeleteForEveryoneEnabled
-  canArchiveReports.value = rCanArchiveReports
+  //canArchiveReports.value = rCanArchiveReports
   moderateEnabled.value = rModerateEnabled
   forwardEnabled.value = rForwardEnabled
   selectedChatItems.value = rSelectedChatItems

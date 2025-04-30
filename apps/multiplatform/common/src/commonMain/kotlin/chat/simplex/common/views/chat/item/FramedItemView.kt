@@ -211,23 +211,25 @@ fun FramedItemView(
         PriorityLayout(Modifier, CHAT_IMAGE_LAYOUT_ID) {
           @Composable
           fun Header() {
-            if (ci.isReport) {
-              if (ci.meta.itemDeleted == null) {
-                FramedItemHeader(
-                  stringResource(if (ci.chatDir.sent) MR.strings.report_item_visibility_submitter else MR.strings.report_item_visibility_moderators),
-                  true,
-                  painterResource(MR.images.ic_flag),
-                  iconColor = Color.Red
-                )
-              } else {
-                val text = if (ci.meta.itemDeleted is CIDeleted.Moderated && ci.meta.itemDeleted.byGroupMember.groupMemberId != (chatInfo as ChatInfo.Group?)?.groupInfo?.membership?.groupMemberId) {
-                  stringResource(MR.strings.report_item_archived_by).format(ci.meta.itemDeleted.byGroupMember.displayName)
-                } else {
-                  stringResource(MR.strings.report_item_archived)
-                }
-                FramedItemHeader(text, true, painterResource(MR.images.ic_flag))
-              }
-            } else if (ci.meta.itemDeleted != null) {
+            //if (ci.isReport) {
+            //  if (ci.meta.itemDeleted == null) {
+            //    FramedItemHeader(
+            //      stringResource(if (ci.chatDir.sent) MR.strings.report_item_visibility_submitter else MR.strings.report_item_visibility_moderators),
+            //      true,
+            //      painterResource(MR.images.ic_flag),
+            //      iconColor = Color.Red
+            //    )
+            //  } else {
+            //    val text = if (ci.meta.itemDeleted is CIDeleted.Moderated && ci.meta.itemDeleted.byGroupMember.groupMemberId != (chatInfo as ChatInfo.Group?)?.groupInfo?.membership?.groupMemberId) {
+            //      stringResource(MR.strings.report_item_archived_by).format(ci.meta.itemDeleted.byGroupMember.displayName)
+            //    } else {
+            //      stringResource(MR.strings.report_item_archived)
+            //    }
+            //    FramedItemHeader(text, true, painterResource(MR.images.ic_flag))
+            //  }
+            //} else if (ci.meta.itemDeleted != null) {
+	    // Reporting removed: second `if` condition copied below as first
+            if (ci.meta.itemDeleted != null) {
               when (ci.meta.itemDeleted) {
                 is CIDeleted.Moderated -> {
                   FramedItemHeader(String.format(stringResource(MR.strings.moderated_item_description), ci.meta.itemDeleted.byGroupMember.chatViewName), true, painterResource(MR.images.ic_flag))
@@ -319,14 +321,14 @@ fun FramedItemView(
                   CIMarkdownText(ci, chatInfo, chatTTL, linkMode, uriHandler, onLinkLongClick, showViaProxy = showViaProxy, showTimestamp = showTimestamp)
                 }
               }
-              is MsgContent.MCReport -> {
-                val prefix = buildAnnotatedString {
-                  withStyle(SpanStyle(color = Color.Red, fontStyle = FontStyle.Italic)) {
-                    append(if (mc.text.isEmpty()) mc.reason.text else "${mc.reason.text}: ")
-                  }
-                }
-                CIMarkdownText(ci, chatInfo, chatTTL, linkMode, uriHandler, onLinkLongClick, showViaProxy = showViaProxy, showTimestamp = showTimestamp, prefix = prefix)
-              }
+              //is MsgContent.MCReport -> {
+              //  val prefix = buildAnnotatedString {
+              //    withStyle(SpanStyle(color = Color.Red, fontStyle = FontStyle.Italic)) {
+              //      append(if (mc.text.isEmpty()) mc.reason.text else "${mc.reason.text}: ")
+              //    }
+              //  }
+              //  CIMarkdownText(ci, chatInfo, chatTTL, linkMode, uriHandler, onLinkLongClick, showViaProxy = showViaProxy, showTimestamp = showTimestamp, prefix = prefix)
+              //}
               else -> CIMarkdownText(ci, chatInfo, chatTTL, linkMode, uriHandler, onLinkLongClick, showViaProxy = showViaProxy, showTimestamp = showTimestamp)
             }
           }

@@ -23,7 +23,7 @@ UPDATE chat_items
 SET include_in_history = 1
 WHERE group_id IS NOT NULL
   AND item_content_tag IN ('rcvMsgContent', 'sndMsgContent')
-  AND msg_content_tag NOT IN ('report');
+  --AND msg_content_tag NOT IN ('report');
 
 CREATE INDEX idx_group_snd_item_statuses_chat_item_id_group_member_id ON group_snd_item_statuses(chat_item_id, group_member_id);
 |]

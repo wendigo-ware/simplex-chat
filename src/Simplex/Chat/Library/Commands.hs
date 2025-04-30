@@ -573,25 +573,25 @@ processChatCommand' vr = \case
   APICreateChatItems folderId cms -> withUser $ \user -> do
     forM_ cms $ \cm -> assertAllowedContent' cm >> assertNoMentions cm
     createNoteFolderContentItems user folderId (L.map composedMessageReq cms)
-  APIReportMessage gId reportedItemId reportReason reportText -> withUser $ \user ->
-    withGroupLock "reportMessage" gId $ do
-      (gInfo, ms) <-
-        withFastStore $ \db -> do
-          gInfo <- getGroupInfo db vr user gId
-          (gInfo,) <$> liftIO (getGroupModerators db vr user gInfo)
-      let ms' = filter compatibleModerator ms
-          mc = MCReport reportText reportReason
-          cm = ComposedMessage {fileSource = Nothing, quotedItemId = Just reportedItemId, msgContent = mc, mentions = M.empty}
-      when (null ms') $ throwChatError $ CECommandError "no moderators support receiving reports"
-      let numFileInvs = length $ filter memberCurrent ms'
-      sendGroupContentMessages_ user gInfo Nothing ms' numFileInvs False Nothing [composedMessageReq cm]
-    where
-      compatibleModerator GroupMember {activeConn, memberChatVRange} =
-        maxVersion (maybe memberChatVRange peerChatVRange activeConn) >= contentReportsVersion
-  ReportMessage {groupName, contactName_, reportReason, reportedMessage} -> withUser $ \user -> do
-    gId <- withFastStore $ \db -> getGroupIdByName db user groupName
-    reportedItemId <- withFastStore $ \db -> getGroupChatItemIdByText db user gId contactName_ reportedMessage
-    processChatCommand $ APIReportMessage gId reportedItemId reportReason ""
+  --APIReportMessage gId reportedItemId reportReason reportText -> withUser $ \user ->
+  --  withGroupLock "reportMessage" gId $ do
+  --    (gInfo, ms) <-
+  --      withFastStore $ \db -> do
+  --        gInfo <- getGroupInfo db vr user gId
+  --        (gInfo,) <$> liftIO (getGroupModerators db vr user gInfo)
+  --    let ms' = filter compatibleModerator ms
+  --        mc = MCReport reportText reportReason
+  --        cm = ComposedMessage {fileSource = Nothing, quotedItemId = Just reportedItemId, msgContent = mc, mentions = M.empty}
+  --    when (null ms') $ throwChatError $ CECommandError "no moderators support receiving reports"
+  --    let numFileInvs = length $ filter memberCurrent ms'
+  --    sendGroupContentMessages_ user gInfo Nothing ms' numFileInvs False Nothing [composedMessageReq cm]
+  --  where
+  --    compatibleModerator GroupMember {activeConn, memberChatVRange} =
+  --      maxVersion (maybe memberChatVRange peerChatVRange activeConn) >= contentReportsVersion
+  --ReportMessage {groupName, contactName_, reportReason, reportedMessage} -> withUser $ \user -> do
+  --  gId <- withFastStore $ \db -> getGroupIdByName db user groupName
+  --  reportedItemId <- withFastStore $ \db -> getGroupChatItemIdByText db user gId contactName_ reportedMessage
+  --  processChatCommand $ APIReportMessage gId reportedItemId reportReason ""
   APIUpdateChatItem (ChatRef cType chatId) itemId live (UpdatedMessage mc mentions) -> withUser $ \user -> assertAllowedContent mc >> case cType of
     CTDirect -> withContactLock "updateChatItem" chatId $ do
       unless (null mentions) $ throwChatError $ CECommandError "mentions are not supported in this chat"
@@ -715,24 +715,24 @@ processChatCommand' vr = \case
     (gInfo, items) <- getCommandGroupChatItems user gId itemIds
     ms <- withFastStore' $ \db -> getGroupMembers db vr user gInfo
     delGroupChatItemsForMembers user gInfo ms items
-  APIArchiveReceivedReports gId -> withUser $ \user -> withFastStore $ \db -> do
-    g <- getGroupInfo db vr user gId
-    deleteTs <- liftIO getCurrentTime
-    ciIds <- liftIO $ markReceivedGroupReportsDeleted db user g deleteTs
-    pure $ CRGroupChatItemsDeleted user g ciIds True (Just $ membership g)
-  APIDeleteReceivedReports gId itemIds mode -> withUser $ \user -> withGroupLock "deleteReports" gId $ do
-    (gInfo, items) <- getCommandGroupChatItems user gId itemIds
-    unless (all isRcvReport items) $ throwChatError $ CECommandError "some items are not received reports"
-    case mode of
-      CIDMInternal -> deleteGroupCIs user gInfo items True False Nothing =<< liftIO getCurrentTime
-      CIDMInternalMark -> markGroupCIsDeleted user gInfo items True Nothing =<< liftIO getCurrentTime
-      CIDMBroadcast -> do
-        ms <- withFastStore' $ \db -> getGroupModerators db vr user gInfo
-        delGroupChatItemsForMembers user gInfo ms items
-    where
-      isRcvReport = \case
-        CChatItem _ ChatItem {content = CIRcvMsgContent (MCReport {})} -> True
-        _ -> False
+  --APIArchiveReceivedReports gId -> withUser $ \user -> withFastStore $ \db -> do
+  --  g <- getGroupInfo db vr user gId
+  --  deleteTs <- liftIO getCurrentTime
+  --  ciIds <- liftIO $ markReceivedGroupReportsDeleted db user g deleteTs
+  --  pure $ CRGroupChatItemsDeleted user g ciIds True (Just $ membership g)
+  --APIDeleteReceivedReports gId itemIds mode -> withUser $ \user -> withGroupLock "deleteReports" gId $ do
+  --  (gInfo, items) <- getCommandGroupChatItems user gId itemIds
+  --  unless (all isRcvReport items) $ throwChatError $ CECommandError "some items are not received reports"
+  --  case mode of
+  --    CIDMInternal -> deleteGroupCIs user gInfo items True False Nothing =<< liftIO getCurrentTime
+  --    CIDMInternalMark -> markGroupCIsDeleted user gInfo items True Nothing =<< liftIO getCurrentTime
+  --    CIDMBroadcast -> do
+  --      ms <- withFastStore' $ \db -> getGroupModerators db vr user gInfo
+  --      delGroupChatItemsForMembers user gInfo ms items
+  --  where
+  --    isRcvReport = \case
+  --      CChatItem _ ChatItem {content = CIRcvMsgContent (MCReport {})} -> True
+  --      _ -> False
   APIChatItemReaction (ChatRef cType chatId) itemId add reaction -> withUser $ \user -> case cType of
     CTDirect ->
       withContactLock "chatItemReaction" chatId $
@@ -835,7 +835,7 @@ processChatCommand' vr = \case
                 MCVideo {text} -> text /= ""
                 MCVoice {text} -> text /= ""
                 MCFile t -> t /= ""
-                MCReport {} -> True
+                --MCReport {} -> True
                 MCUnknown {} -> True
   APIForwardChatItems toChat@(ChatRef toCType toChatId) fromChat@(ChatRef fromCType fromChatId) itemIds itemTTL -> withUser $ \user -> case toCType of
     CTDirect -> do
@@ -2884,7 +2884,12 @@ processChatCommand' vr = \case
     delGroupChatItems user gInfo@GroupInfo {membership} items moderation = do
       deletedTs <- liftIO getCurrentTime
       when moderation $ do
-        ciIds <- concat <$> withStore' (\db -> forM items $ \(CChatItem _ ci) -> markMessageReportsDeleted db user gInfo ci membership deletedTs)
+        -- Not gonna lie, I don't understand Haskell well enough to 100%
+	-- understand what the next line is doing... But I'm gonna comment it
+	-- out and see if it breaks something I didn't mean to break. (I'm only
+	-- trying to break reporting, so markMessageReportsDeleted is no longer
+	-- defined.)
+        --ciIds <- concat <$> withStore' (\db -> forM items $ \(CChatItem _ ci) -> markMessageReportsDeleted db user gInfo ci membership deletedTs)
         unless (null ciIds) $ toView $ CRGroupChatItemsDeleted user gInfo ciIds True (Just membership)
       let m = if moderation then Just membership else Nothing
       if groupFeatureMemberAllowed SGFFullDelete membership gInfo
@@ -3122,7 +3127,7 @@ processChatCommand' vr = \case
         _ -> pure () -- prohibited
     assertAllowedContent :: MsgContent -> CM ()
     assertAllowedContent = \case
-      MCReport {} -> throwChatError $ CECommandError "sending reports via this API is not supported"
+      --MCReport {} -> throwChatError $ CECommandError "sending reports via this API is not supported"
       _ -> pure ()
     assertAllowedContent' :: ComposedMessage -> CM ()
     assertAllowedContent' ComposedMessage {msgContent} = assertAllowedContent msgContent
@@ -3890,13 +3895,13 @@ chatCommandP =
       "/_update tag " *> (APIUpdateChatTag <$> A.decimal <* A.space <*> jsonP),
       "/_reorder tags " *> (APIReorderChatTags <$> strP),
       "/_create *" *> (APICreateChatItems <$> A.decimal <*> (" json " *> jsonP <|> " text " *> composedMessagesTextP)),
-      "/_report #" *> (APIReportMessage <$> A.decimal <* A.space <*> A.decimal <*> (" reason=" *> strP) <*> (A.space *> textP <|> pure "")),
-      "/report #" *> (ReportMessage <$> displayNameP <*> optional (" @" *> displayNameP) <*> _strP <* A.space <*> msgTextP),
+      --"/_report #" *> (APIReportMessage <$> A.decimal <* A.space <*> A.decimal <*> (" reason=" *> strP) <*> (A.space *> textP <|> pure "")),
+      --"/report #" *> (ReportMessage <$> displayNameP <*> optional (" @" *> displayNameP) <*> _strP <* A.space <*> msgTextP),
       "/_update item " *> (APIUpdateChatItem <$> chatRefP <* A.space <*> A.decimal <*> liveMessageP <*> (" json" *> jsonP <|> " text " *> updatedMessagesTextP)),
       "/_delete item " *> (APIDeleteChatItem <$> chatRefP <*> _strP <*> _strP),
       "/_delete member item #" *> (APIDeleteMemberChatItem <$> A.decimal <*> _strP),
-      "/_archive reports #" *> (APIArchiveReceivedReports <$> A.decimal),
-      "/_delete reports #" *> (APIDeleteReceivedReports <$> A.decimal <*> _strP <*> _strP),
+      --"/_archive reports #" *> (APIArchiveReceivedReports <$> A.decimal),
+      --"/_delete reports #" *> (APIDeleteReceivedReports <$> A.decimal <*> _strP <*> _strP),
       "/_reaction " *> (APIChatItemReaction <$> chatRefP <* A.space <*> A.decimal <* A.space <*> onOffP <* A.space <*> (knownReaction <$?> jsonP)),
       "/_reaction members " *> (APIGetReactionMembers <$> A.decimal <* " #" <*> A.decimal <* A.space <*> A.decimal <* A.space <*> (knownReaction <$?> jsonP)),
       "/_forward plan " *> (APIPlanForwardChatItems <$> chatRefP <*> _strP),
@@ -4130,7 +4135,7 @@ chatCommandP =
       "/set disappear #" *> (SetGroupTimedMessages <$> displayNameP <*> (A.space *> timedTTLOnOffP)),
       "/set disappear @" *> (SetContactTimedMessages <$> displayNameP <*> optional (A.space *> timedMessagesEnabledP)),
       "/set disappear " *> (SetUserTimedMessages <$> (("yes" $> True) <|> ("no" $> False))),
-      "/set reports #" *> (SetGroupFeature (AGFNR SGFReports) <$> displayNameP <*> _strP),
+      --"/set reports #" *> (SetGroupFeature (AGFNR SGFReports) <$> displayNameP <*> _strP),
       "/set links #" *> (SetGroupFeatureRole (AGFR SGFSimplexLinks) <$> displayNameP <*> _strP <*> optional memberRole),
       ("/incognito" <* optional (A.space *> onOffP)) $> ChatHelp HSIncognito,
       "/set device name " *> (SetLocalDeviceName <$> textP),

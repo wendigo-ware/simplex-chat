@@ -18,7 +18,7 @@ import chat.simplex.common.model.ChatController.getNetCfg
 import chat.simplex.common.model.ChatController.setNetCfg
 import chat.simplex.common.model.ChatModel.changingActiveUserMutex
 import chat.simplex.common.model.ChatModel.withChats
-import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
+//import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
 import chat.simplex.common.model.MsgContent.MCUnknown
 import dev.icerock.moko.resources.compose.painterResource
 import chat.simplex.common.platform.*
@@ -983,16 +983,16 @@ object ChatController {
     }
   }
 
-  suspend fun apiReportMessage(rh: Long?, groupId: Long, chatItemId: Long, reportReason: ReportReason, reportText: String): List<AChatItem>? {
-    val r = sendCmd(rh, CC.ApiReportMessage(groupId, chatItemId, reportReason, reportText))
-    return when (r) {
-      is CR.NewChatItems -> r.chatItems
-      else -> {
-        apiErrorAlert("apiReportMessage", generalGetString(MR.strings.error_creating_report), r)
-        null
-      }
-    }
-  }
+  //suspend fun apiReportMessage(rh: Long?, groupId: Long, chatItemId: Long, reportReason: ReportReason, reportText: String): List<AChatItem>? {
+  //  val r = sendCmd(rh, CC.ApiReportMessage(groupId, chatItemId, reportReason, reportText))
+  //  return when (r) {
+  //    is CR.NewChatItems -> r.chatItems
+  //    else -> {
+  //      apiErrorAlert("apiReportMessage", generalGetString(MR.strings.error_creating_report), r)
+  //      null
+  //    }
+  //  }
+  //}
 
   suspend fun apiGetChatItemInfo(rh: Long?, type: ChatType, id: Long, itemId: Long): ChatItemInfo? {
     return when (val r = sendCmd(rh, CC.ApiGetChatItemInfo(type, id, itemId))) {
@@ -1071,19 +1071,19 @@ object ChatController {
     return null
   }
 
-  suspend fun apiArchiveReceivedReports(rh: Long?, groupId: Long): CR.GroupChatItemsDeleted? {
-    val r = sendCmd(rh, CC.ApiArchiveReceivedReports(groupId))
-    if (r is CR.GroupChatItemsDeleted) return r
-    Log.e(TAG, "apiArchiveReceivedReports bad response: ${r.responseType} ${r.details}")
-    return null
-  }
+  //suspend fun apiArchiveReceivedReports(rh: Long?, groupId: Long): CR.GroupChatItemsDeleted? {
+  //  val r = sendCmd(rh, CC.ApiArchiveReceivedReports(groupId))
+  //  if (r is CR.GroupChatItemsDeleted) return r
+  //  Log.e(TAG, "apiArchiveReceivedReports bad response: ${r.responseType} ${r.details}")
+  //  return null
+  //}
 
-  suspend fun apiDeleteReceivedReports(rh: Long?, groupId: Long, itemIds: List<Long>, mode: CIDeleteMode): List<ChatItemDeletion>? {
-    val r = sendCmd(rh, CC.ApiDeleteReceivedReports(groupId, itemIds, mode))
-    if (r is CR.ChatItemsDeleted) return r.chatItemDeletions
-    Log.e(TAG, "apiDeleteReceivedReports bad response: ${r.responseType} ${r.details}")
-    return null
-  }
+  //suspend fun apiDeleteReceivedReports(rh: Long?, groupId: Long, itemIds: List<Long>, mode: CIDeleteMode): List<ChatItemDeletion>? {
+  //  val r = sendCmd(rh, CC.ApiDeleteReceivedReports(groupId, itemIds, mode))
+  //  if (r is CR.ChatItemsDeleted) return r.chatItemDeletions
+  //  Log.e(TAG, "apiDeleteReceivedReports bad response: ${r.responseType} ${r.details}")
+  //  return null
+  //}
 
   suspend fun testProtoServer(rh: Long?, server: String): ProtocolTestFailure? {
     val userId = currentUserId("testProtoServer")
@@ -1542,9 +1542,9 @@ object ChatController {
         withChats {
           clearChat(chat.remoteHostId, updatedChatInfo)
         }
-        withChats(MsgContentTag.Report) {
-          clearChat(chat.remoteHostId, updatedChatInfo)
-        }
+        //withChats(MsgContentTag.Report) {
+        //  clearChat(chat.remoteHostId, updatedChatInfo)
+        //}
         ntfManager.cancelNotificationsForChat(chat.chatInfo.id)
         close?.invoke()
       }
@@ -2479,9 +2479,9 @@ object ChatController {
           withChats {
             upsertGroupMember(rhId, r.groupInfo, r.toMember)
           }
-          withReportsChatsIfOpen {
-            upsertGroupMember(rhId, r.groupInfo, r.toMember)
-          }
+          //withReportsChatsIfOpen {
+          //  upsertGroupMember(rhId, r.groupInfo, r.toMember)
+          //}
         }
       }
       is CR.ContactsMerged -> {
@@ -2530,15 +2530,15 @@ object ChatController {
           if (active(r.user)) {
             withChats {
               addChatItem(rhId, cInfo, cItem)
-              if (cItem.isActiveReport) {
-                increaseGroupReportsCounter(rhId, cInfo.id)
-              }
+              //if (cItem.isActiveReport) {
+              //  increaseGroupReportsCounter(rhId, cInfo.id)
+              //}
             }
-            withReportsChatsIfOpen {
-              if (cItem.isReport) {
-                addChatItem(rhId, cInfo, cItem)
-              }
-            }
+            //withReportsChatsIfOpen {
+            //  if (cItem.isReport) {
+            //    addChatItem(rhId, cInfo, cItem)
+            //  }
+            //}
           } else if (cItem.isRcvNew && cInfo.ntfsEnabled(cItem)) {
             withChats {
               increaseUnreadCounter(rhId, r.user)
@@ -2565,11 +2565,11 @@ object ChatController {
             withChats {
               updateChatItem(cInfo, cItem, status = cItem.meta.itemStatus)
             }
-            withReportsChatsIfOpen {
-              if (cItem.isReport) {
-                updateChatItem(cInfo, cItem, status = cItem.meta.itemStatus)
-              }
-            }
+            //withReportsChatsIfOpen {
+            //  if (cItem.isReport) {
+            //    updateChatItem(cInfo, cItem, status = cItem.meta.itemStatus)
+            //  }
+            //}
           }
         }
       is CR.ChatItemUpdated ->
@@ -2579,11 +2579,11 @@ object ChatController {
           withChats {
             updateChatItem(r.reaction.chatInfo, r.reaction.chatReaction.chatItem)
           }
-          withReportsChatsIfOpen {
-            if (r.reaction.chatReaction.chatItem.isReport) {
-              updateChatItem(r.reaction.chatInfo, r.reaction.chatReaction.chatItem)
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  if (r.reaction.chatReaction.chatItem.isReport) {
+          //    updateChatItem(r.reaction.chatInfo, r.reaction.chatReaction.chatItem)
+          //  }
+          //}
         }
       }
       is CR.ChatItemsDeleted -> {
@@ -2620,19 +2620,19 @@ object ChatController {
             } else {
               upsertChatItem(rhId, cInfo, toChatItem.chatItem)
             }
-            if (cItem.isActiveReport) {
-              decreaseGroupReportsCounter(rhId, cInfo.id)
-            }
+            //if (cItem.isActiveReport) {
+            //  decreaseGroupReportsCounter(rhId, cInfo.id)
+            //}
           }
-          withReportsChatsIfOpen {
-            if (cItem.isReport) {
-              if (toChatItem == null) {
-                removeChatItem(rhId, cInfo, cItem)
-              } else {
-                upsertChatItem(rhId, cInfo, toChatItem.chatItem)
-              }
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  if (cItem.isReport) {
+          //    if (toChatItem == null) {
+          //      removeChatItem(rhId, cInfo, cItem)
+          //    } else {
+          //      upsertChatItem(rhId, cInfo, toChatItem.chatItem)
+          //    }
+          //  }
+          //}
         }
       }
       is CR.GroupChatItemsDeleted -> {
@@ -2698,11 +2698,11 @@ object ChatController {
               removeMemberItems(rhId, r.groupInfo.membership, byMember = r.member, r.groupInfo)
             }
           }
-          withReportsChatsIfOpen {
-            if (r.withMessages) {
-              removeMemberItems(rhId, r.groupInfo.membership, byMember = r.member, r.groupInfo)
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  if (r.withMessages) {
+          //    removeMemberItems(rhId, r.groupInfo.membership, byMember = r.member, r.groupInfo)
+          //  }
+          //}
         }
       is CR.DeletedMember ->
         if (active(r.user)) {
@@ -2712,30 +2712,30 @@ object ChatController {
               removeMemberItems(rhId, r.deletedMember, byMember = r.byMember, r.groupInfo)
             }
           }
-          withReportsChatsIfOpen {
-            upsertGroupMember(rhId, r.groupInfo, r.deletedMember)
-            if (r.withMessages) {
-              removeMemberItems(rhId, r.deletedMember, byMember = r.byMember, r.groupInfo)
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  upsertGroupMember(rhId, r.groupInfo, r.deletedMember)
+          //  if (r.withMessages) {
+          //    removeMemberItems(rhId, r.deletedMember, byMember = r.byMember, r.groupInfo)
+          //  }
+          //}
         }
       is CR.LeftMember ->
         if (active(r.user)) {
           withChats {
             upsertGroupMember(rhId, r.groupInfo, r.member)
           }
-          withReportsChatsIfOpen {
-            upsertGroupMember(rhId, r.groupInfo, r.member)
-          }
+          //withReportsChatsIfOpen {
+          //  upsertGroupMember(rhId, r.groupInfo, r.member)
+          //}
         }
       is CR.MemberRole ->
         if (active(r.user)) {
           withChats {
             upsertGroupMember(rhId, r.groupInfo, r.member)
           }
-          withReportsChatsIfOpen {
-            upsertGroupMember(rhId, r.groupInfo, r.member)
-          }
+          //withReportsChatsIfOpen {
+          //  upsertGroupMember(rhId, r.groupInfo, r.member)
+          //}
         }
       is CR.MembersRoleUser ->
         if (active(r.user)) {
@@ -2744,20 +2744,20 @@ object ChatController {
               upsertGroupMember(rhId, r.groupInfo, member)
             }
           }
-          withReportsChatsIfOpen {
-            r.members.forEach { member ->
-              upsertGroupMember(rhId, r.groupInfo, member)
-            }
-          }
+          //withReportsChatsIfOpen {
+          //  r.members.forEach { member ->
+          //    upsertGroupMember(rhId, r.groupInfo, member)
+          //  }
+          //}
         }
       is CR.MemberBlockedForAll ->
         if (active(r.user)) {
           withChats {
             upsertGroupMember(rhId, r.groupInfo, r.member)
           }
-          withReportsChatsIfOpen {
-            upsertGroupMember(rhId, r.groupInfo, r.member)
-          }
+          //withReportsChatsIfOpen {
+          //  upsertGroupMember(rhId, r.groupInfo, r.member)
+          //}
         }
       is CR.GroupDeleted -> // TODO update user member
         if (active(r.user)) {
@@ -3131,11 +3131,11 @@ object ChatController {
       val cInfo = aChatItem.chatInfo
       val cItem = aChatItem.chatItem
       withChats { upsertChatItem(rh, cInfo, cItem) }
-      withReportsChatsIfOpen {
-        if (cItem.isReport) {
-          upsertChatItem(rh, cInfo, cItem)
-        }
-      }
+      //withReportsChatsIfOpen {
+      //  if (cItem.isReport) {
+      //    upsertChatItem(rh, cInfo, cItem)
+      //  }
+      //}
     }
   }
 
@@ -3149,7 +3149,7 @@ object ChatController {
     val cInfo = ChatInfo.Group(r.groupInfo)
     withChats {
       r.chatItemIDs.forEach { itemId ->
-        decreaseGroupReportsCounter(rhId, cInfo.id)
+        //decreaseGroupReportsCounter(rhId, cInfo.id)
         val cItem = chatItems.value.lastOrNull { it.id == itemId } ?: return@forEach
         if (chatModel.chatId.value != null) {
           // Stop voice playback only inside a chat, allow to play in a chat list
@@ -3173,21 +3173,21 @@ object ChatController {
         upsertChatItem(rhId, cInfo, cItem.copy(meta = cItem.meta.copy(itemDeleted = deleted)))
       }
     }
-    withReportsChatsIfOpen {
-      r.chatItemIDs.forEach { itemId ->
-        val cItem = chatItems.value.lastOrNull { it.id == itemId } ?: return@forEach
-        if (chatModel.chatId.value != null) {
-          // Stop voice playback only inside a chat, allow to play in a chat list
-          AudioPlayer.stop(cItem)
-        }
-        val deleted = if (r.member_ != null && (cItem.chatDir as CIDirection.GroupRcv?)?.groupMember?.groupMemberId != r.member_.groupMemberId) {
-          CIDeleted.Moderated(Clock.System.now(), r.member_)
-        } else {
-          CIDeleted.Deleted(Clock.System.now())
-        }
-        upsertChatItem(rhId, cInfo, cItem.copy(meta = cItem.meta.copy(itemDeleted = deleted)))
-      }
-    }
+    //withReportsChatsIfOpen {
+    //  r.chatItemIDs.forEach { itemId ->
+    //    val cItem = chatItems.value.lastOrNull { it.id == itemId } ?: return@forEach
+    //    if (chatModel.chatId.value != null) {
+    //      // Stop voice playback only inside a chat, allow to play in a chat list
+    //      AudioPlayer.stop(cItem)
+    //    }
+    //    val deleted = if (r.member_ != null && (cItem.chatDir as CIDirection.GroupRcv?)?.groupMember?.groupMemberId != r.member_.groupMemberId) {
+    //      CIDeleted.Moderated(Clock.System.now(), r.member_)
+    //    } else {
+    //      CIDeleted.Deleted(Clock.System.now())
+    //    }
+    //    upsertChatItem(rhId, cInfo, cItem.copy(meta = cItem.meta.copy(itemDeleted = deleted)))
+    //  }
+    //}
   }
 
   private suspend fun chatItemUpdateNotify(rh: Long?, user: UserLike, aChatItem: AChatItem) {
@@ -3198,10 +3198,10 @@ object ChatController {
       notify()
     } else {
       val createdChat = withChats { upsertChatItem(rh, cInfo, cItem) }
-      withReportsChatsIfOpen { if (cItem.content.msgContent is MsgContent.MCReport) { upsertChatItem(rh, cInfo, cItem) } }
-      if (createdChat) {
-        notify()
-      } else if (cItem.content is CIContent.RcvCall && cItem.content.status == CICallStatus.Missed) {
+      //withReportsChatsIfOpen { if (cItem.content.msgContent is MsgContent.MCReport) { upsertChatItem(rh, cInfo, cItem) } }
+      //if (createdChat) {
+      //  notify()
+      //} else if (cItem.content is CIContent.RcvCall && cItem.content.status == CICallStatus.Missed) {
         notify()
       }
     }
@@ -3248,11 +3248,11 @@ object ChatController {
         chats.clear()
         popChatCollector.clear()
       }
-      withReportsChatsIfOpen {
-        chatItems.clearAndNotify()
-        chats.clear()
-        popChatCollector.clear()
-      }
+      //withReportsChatsIfOpen {
+      //  chatItems.clearAndNotify()
+      //  chats.clear()
+      //  popChatCollector.clear()
+      //}
     }
     val statuses = apiGetNetworkStatuses(rhId)
     if (statuses != null) {
@@ -3411,12 +3411,12 @@ sealed class CC {
   class ApiUpdateChatTag(val tagId: Long, val tagData: ChatTagData): CC()
   class ApiReorderChatTags(val tagIds: List<Long>): CC()
   class ApiCreateChatItems(val noteFolderId: Long, val composedMessages: List<ComposedMessage>): CC()
-  class ApiReportMessage(val groupId: Long, val chatItemId: Long, val reportReason: ReportReason, val reportText: String): CC()
+  //class ApiReportMessage(val groupId: Long, val chatItemId: Long, val reportReason: ReportReason, val reportText: String): CC()
   class ApiUpdateChatItem(val type: ChatType, val id: Long, val itemId: Long, val updatedMessage: UpdatedMessage, val live: Boolean): CC()
   class ApiDeleteChatItem(val type: ChatType, val id: Long, val itemIds: List<Long>, val mode: CIDeleteMode): CC()
   class ApiDeleteMemberChatItem(val groupId: Long, val itemIds: List<Long>): CC()
-  class ApiArchiveReceivedReports(val groupId: Long): CC()
-  class ApiDeleteReceivedReports(val groupId: Long, val itemIds: List<Long>, val mode: CIDeleteMode): CC()
+  //class ApiArchiveReceivedReports(val groupId: Long): CC()
+  //class ApiDeleteReceivedReports(val groupId: Long, val itemIds: List<Long>, val mode: CIDeleteMode): CC()
   class ApiChatItemReaction(val type: ChatType, val id: Long, val itemId: Long, val add: Boolean, val reaction: MsgReaction): CC()
   class ApiGetReactionMembers(val userId: Long, val groupId: Long, val itemId: Long, val reaction: MsgReaction): CC()
   class ApiPlanForwardChatItems(val fromChatType: ChatType, val fromChatId: Long, val chatItemIds: List<Long>): CC()
@@ -3591,12 +3591,12 @@ sealed class CC {
       val msgs = json.encodeToString(composedMessages)
       "/_create *$noteFolderId json $msgs"
     }
-    is ApiReportMessage -> "/_report #$groupId $chatItemId reason=${json.encodeToString(reportReason).trim('"')} $reportText"
+    //is ApiReportMessage -> "/_report #$groupId $chatItemId reason=${json.encodeToString(reportReason).trim('"')} $reportText"
     is ApiUpdateChatItem -> "/_update item ${chatRef(type, id)} $itemId live=${onOff(live)} ${updatedMessage.cmdString}"
     is ApiDeleteChatItem -> "/_delete item ${chatRef(type, id)} ${itemIds.joinToString(",")} ${mode.deleteMode}"
     is ApiDeleteMemberChatItem -> "/_delete member item #$groupId ${itemIds.joinToString(",")}"
-    is ApiArchiveReceivedReports -> "/_archive reports #$groupId"
-    is ApiDeleteReceivedReports -> "/_delete reports #$groupId ${itemIds.joinToString(",")} ${mode.deleteMode}"
+    //is ApiArchiveReceivedReports -> "/_archive reports #$groupId"
+    //is ApiDeleteReceivedReports -> "/_delete reports #$groupId ${itemIds.joinToString(",")} ${mode.deleteMode}"
     is ApiChatItemReaction -> "/_reaction ${chatRef(type, id)} $itemId ${onOff(add)} ${json.encodeToString(reaction)}"
     is ApiGetReactionMembers -> "/_reaction members $userId #$groupId $itemId ${json.encodeToString(reaction)}"
     is ApiForwardChatItems -> {
@@ -3759,12 +3759,12 @@ sealed class CC {
     is ApiUpdateChatTag -> "apiUpdateChatTag"
     is ApiReorderChatTags -> "apiReorderChatTags"
     is ApiCreateChatItems -> "apiCreateChatItems"
-    is ApiReportMessage -> "apiReportMessage"
+    //is ApiReportMessage -> "apiReportMessage"
     is ApiUpdateChatItem -> "apiUpdateChatItem"
     is ApiDeleteChatItem -> "apiDeleteChatItem"
     is ApiDeleteMemberChatItem -> "apiDeleteMemberChatItem"
-    is ApiArchiveReceivedReports -> "apiArchiveReceivedReports"
-    is ApiDeleteReceivedReports -> "apiDeleteReceivedReports"
+    //is ApiArchiveReceivedReports -> "apiArchiveReceivedReports"
+    //is ApiDeleteReceivedReports -> "apiDeleteReceivedReports"
     is ApiChatItemReaction -> "apiChatItemReaction"
     is ApiGetReactionMembers -> "apiGetReactionMembers"
     is ApiForwardChatItems -> "apiForwardChatItems"
@@ -5206,7 +5206,7 @@ enum class GroupFeature: Feature {
   @SerialName("voice") Voice,
   @SerialName("files") Files,
   @SerialName("simplexLinks") SimplexLinks,
-  @SerialName("reports") Reports,
+  //@SerialName("reports") Reports,
   @SerialName("history") History;
 
   override val hasParam: Boolean get() = when(this) {
@@ -5223,7 +5223,7 @@ enum class GroupFeature: Feature {
       Voice -> true
       Files -> true
       SimplexLinks -> true
-      Reports -> false
+      //Reports -> false
       History -> false
     }
 
@@ -5236,7 +5236,7 @@ enum class GroupFeature: Feature {
       Voice -> generalGetString(MR.strings.voice_messages)
       Files -> generalGetString(MR.strings.files_and_media)
       SimplexLinks -> generalGetString(MR.strings.simplex_links)
-      Reports -> generalGetString(MR.strings.group_reports_member_reports)
+      //Reports -> generalGetString(MR.strings.group_reports_member_reports)
       History -> generalGetString(MR.strings.recent_history)
     }
 
@@ -5249,7 +5249,7 @@ enum class GroupFeature: Feature {
       Voice -> painterResource(MR.images.ic_keyboard_voice)
       Files -> painterResource(MR.images.ic_draft)
       SimplexLinks -> painterResource(MR.images.ic_link)
-      Reports -> painterResource(MR.images.ic_flag)
+      //Reports -> painterResource(MR.images.ic_flag)
       History -> painterResource(MR.images.ic_schedule)
     }
 
@@ -5262,7 +5262,7 @@ enum class GroupFeature: Feature {
     Voice -> painterResource(MR.images.ic_keyboard_voice_filled)
     Files -> painterResource(MR.images.ic_draft_filled)
     SimplexLinks -> painterResource(MR.images.ic_link)
-    Reports -> painterResource(MR.images.ic_flag_filled)
+    //Reports -> painterResource(MR.images.ic_flag_filled)
     History -> painterResource(MR.images.ic_schedule_filled)
   }
 
@@ -5297,10 +5297,10 @@ enum class GroupFeature: Feature {
           GroupFeatureEnabled.ON -> generalGetString(MR.strings.allow_to_send_simplex_links)
           GroupFeatureEnabled.OFF -> generalGetString(MR.strings.prohibit_sending_simplex_links)
         }
-        Reports -> when(enabled) {
-          GroupFeatureEnabled.ON -> generalGetString(MR.strings.enable_sending_member_reports)
-          GroupFeatureEnabled.OFF -> generalGetString(MR.strings.disable_sending_member_reports)
-        }
+        //Reports -> when(enabled) {
+        //  GroupFeatureEnabled.ON -> generalGetString(MR.strings.enable_sending_member_reports)
+        //  GroupFeatureEnabled.OFF -> generalGetString(MR.strings.disable_sending_member_reports)
+        //}
         History -> when(enabled) {
           GroupFeatureEnabled.ON -> generalGetString(MR.strings.enable_sending_recent_history)
           GroupFeatureEnabled.OFF -> generalGetString(MR.strings.disable_sending_recent_history)
@@ -5336,10 +5336,10 @@ enum class GroupFeature: Feature {
           GroupFeatureEnabled.ON -> generalGetString(MR.strings.group_members_can_send_simplex_links)
           GroupFeatureEnabled.OFF -> generalGetString(MR.strings.simplex_links_are_prohibited_in_group)
         }
-        Reports -> when(enabled) {
-          GroupFeatureEnabled.ON -> generalGetString(MR.strings.group_members_can_send_reports)
-          GroupFeatureEnabled.OFF -> generalGetString(MR.strings.member_reports_are_prohibited)
-        }
+        //Reports -> when(enabled) {
+        //  GroupFeatureEnabled.ON -> generalGetString(MR.strings.group_members_can_send_reports)
+        //  GroupFeatureEnabled.OFF -> generalGetString(MR.strings.member_reports_are_prohibited)
+        //}
         History -> when(enabled) {
           GroupFeatureEnabled.ON -> generalGetString(MR.strings.recent_history_is_sent_to_new_members)
           GroupFeatureEnabled.OFF -> generalGetString(MR.strings.recent_history_is_not_sent_to_new_members)
@@ -5459,7 +5459,7 @@ data class FullGroupPreferences(
   val voice: RoleGroupPreference,
   val files: RoleGroupPreference,
   val simplexLinks: RoleGroupPreference,
-  val reports: GroupPreference,
+  //val reports: GroupPreference,
   val history: GroupPreference,
 ) {
   fun toGroupPreferences(): GroupPreferences =
@@ -5471,7 +5471,7 @@ data class FullGroupPreferences(
       voice = voice,
       files = files,
       simplexLinks = simplexLinks,
-      reports = reports,
+      //reports = reports,
       history = history,
     )
 
@@ -5484,7 +5484,7 @@ data class FullGroupPreferences(
       voice = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
       files = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
       simplexLinks = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
-      reports = GroupPreference(GroupFeatureEnabled.ON),
+      //reports = GroupPreference(GroupFeatureEnabled.ON),
       history = GroupPreference(GroupFeatureEnabled.ON),
     )
   }
@@ -5499,7 +5499,7 @@ data class GroupPreferences(
   val voice: RoleGroupPreference? = null,
   val files: RoleGroupPreference? = null,
   val simplexLinks: RoleGroupPreference? = null,
-  val reports: GroupPreference? = null,
+  //val reports: GroupPreference? = null,
   val history: GroupPreference? = null,
 ) {
   companion object {
@@ -5511,7 +5511,7 @@ data class GroupPreferences(
       voice = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
       files = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
       simplexLinks = RoleGroupPreference(GroupFeatureEnabled.ON, role = null),
-      reports = GroupPreference(GroupFeatureEnabled.ON),
+      //reports = GroupPreference(GroupFeatureEnabled.ON),
       history = GroupPreference(GroupFeatureEnabled.ON),
     )
   }

@@ -185,15 +185,17 @@ fun ChatPreviewView(
           ci.meta.itemDeleted == null -> ci.formattedText
           else -> null
         }
-        val prefix = when (val mc = ci.content.msgContent) {
-          is MsgContent.MCReport ->
-            buildAnnotatedString {
-              withStyle(SpanStyle(color = Color.Red, fontStyle = FontStyle.Italic)) {
-                append(if (text.isEmpty()) mc.reason.text else "${mc.reason.text}: ")
-              }
-            }
-          else -> null
-        }
+        //val prefix = when (val mc = ci.content.msgContent) {
+        //  is MsgContent.MCReport ->
+        //    buildAnnotatedString {
+        //      withStyle(SpanStyle(color = Color.Red, fontStyle = FontStyle.Italic)) {
+        //        append(if (text.isEmpty()) mc.reason.text else "${mc.reason.text}: ")
+        //      }
+        //    }
+        //  else -> null
+        //}
+	// Content reporting removed; no MsgContent.MCReport. Adding next line:
+        val prefix = null
 
         MarkdownText(
           text,
@@ -362,8 +364,8 @@ fun ChatPreviewView(
     } else if (cInfo is ChatInfo.Group) {
       if (progressByTimeout) {
         progressView()
-      } else if (chat.chatStats.reportsCount > 0) {
-        GroupReportsIcon()
+      //} else if (chat.chatStats.reportsCount > 0) {
+      //  GroupReportsIcon()
       } else {
         IncognitoIcon(chat.chatInfo.incognito)
       }
@@ -547,17 +549,17 @@ fun IncognitoIcon(incognito: Boolean) {
   }
 }
 
-@Composable
-fun GroupReportsIcon() {
-  Icon(
-    painterResource(MR.images.ic_flag),
-    contentDescription = null,
-    tint = MaterialTheme.colors.error,
-    modifier = Modifier
-      .size(21.sp.toDp())
-      .offset(x = 2.sp.toDp())
-  )
-}
+//@Composable
+//fun GroupReportsIcon() {
+//  Icon(
+//    painterResource(MR.images.ic_flag),
+//    contentDescription = null,
+//    tint = MaterialTheme.colors.error,
+//    modifier = Modifier
+//      .size(21.sp.toDp())
+//      .offset(x = 2.sp.toDp())
+//  )
+//}
 
 @Composable
 private fun groupInvitationPreviewText(currentUserProfileDisplayName: String?, groupInfo: GroupInfo): String {

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.*
 import chat.simplex.common.model.*
 import chat.simplex.common.model.ChatController.appPrefs
 import chat.simplex.common.model.ChatModel.withChats
-import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
+//import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
 import chat.simplex.common.ui.theme.*
 import chat.simplex.common.views.helpers.*
 import chat.simplex.common.views.usersettings.*
@@ -433,11 +433,11 @@ fun ModalData.GroupChatInfoLayout(
         val prefsTitleId = if (groupInfo.businessChat == null) MR.strings.group_preferences else MR.strings.chat_preferences
         GroupPreferencesButton(prefsTitleId, openPreferences)
         if (groupInfo.canModerate) {
-          GroupReportsButton {
-            scope.launch {
-              showGroupReportsView(chatModel.chatId, scrollToItemId, chat.chatInfo)
-            }
-          }
+          //GroupReportsButton {
+          //  scope.launch {
+          //    showGroupReportsView(chatModel.chatId, scrollToItemId, chat.chatInfo)
+          //  }
+          //}
         }
         if (activeSortedMembers.filter { it.memberCurrent }.size <= SMALL_GROUPS_RCPS_MEM_LIMIT) {
           SendReceiptsOption(currentUser, sendReceipts, setSendReceipts)
@@ -693,14 +693,14 @@ private fun GroupPreferencesButton(titleId: StringResource, onClick: () -> Unit)
   )
 }
 
-@Composable
-private fun GroupReportsButton(onClick: () -> Unit) {
-  SettingsActionItem(
-    painterResource(MR.images.ic_flag),
-    stringResource(MR.strings.group_reports_member_reports),
-    click = onClick
-  )
-}
+//@Composable
+//private fun GroupReportsButton(onClick: () -> Unit) {
+//  SettingsActionItem(
+//    painterResource(MR.images.ic_flag),
+//    stringResource(MR.strings.group_reports_member_reports),
+//    click = onClick
+//  )
+//}
 
 @Composable
 private fun SendReceiptsOption(currentUser: User, state: State<SendReceipts>, onSelected: (SendReceipts) -> Unit) {
@@ -972,11 +972,11 @@ fun removeMembers(rhId: Long?, groupInfo: GroupInfo, memberIds: List<Long>, onSu
           upsertGroupMember(rhId, groupInfo, updatedMember)
         }
       }
-      withReportsChatsIfOpen {
-        updatedMembers.forEach { updatedMember ->
-          upsertGroupMember(rhId, groupInfo, updatedMember)
-        }
-      }
+      //withReportsChatsIfOpen {
+      //  updatedMembers.forEach { updatedMember ->
+      //    upsertGroupMember(rhId, groupInfo, updatedMember)
+      //  }
+      //}
       onSuccess()
     }
   }

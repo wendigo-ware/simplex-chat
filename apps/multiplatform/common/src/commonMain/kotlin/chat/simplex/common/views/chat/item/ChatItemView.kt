@@ -81,7 +81,7 @@ fun ChatItemView(
   selectChatItem: () -> Unit,
   deleteMessage: (Long, CIDeleteMode) -> Unit,
   deleteMessages: (List<Long>) -> Unit,
-  archiveReports: (List<Long>, Boolean) -> Unit,
+  //archiveReports: (List<Long>, Boolean) -> Unit,
   receiveFile: (Long) -> Unit,
   cancelFile: (Long) -> Unit,
   joinGroup: (Long, () -> Unit) -> Unit,
@@ -279,7 +279,7 @@ fun ChatItemView(
         GoToItemInnerButton(alignStart, MR.images.ic_search, 17.dp, parentActivated) {
           withBGApi {
             openChat(rhId, cInfo.chatType, cInfo.apiId, null, cItem.id)
-            closeReportsIfNeeded()
+            //closeReportsIfNeeded()
           }
         }
       } else if (chatTypeApiIdMsgId != null) {
@@ -287,7 +287,7 @@ fun ChatItemView(
           val (chatType, apiId, msgId) = chatTypeApiIdMsgId
           withBGApi {
             openChat(rhId, chatType, apiId, null, msgId)
-            closeReportsIfNeeded()
+            //closeReportsIfNeeded()
           }
         }
       }
@@ -378,17 +378,19 @@ fun ChatItemView(
               val saveFileLauncher = rememberSaveFileLauncher(ciFile = cItem.file)
               when {
                 // cItem.id check is a special case for live message chat item which has negative ID while not sent yet
-                cItem.isReport && cItem.meta.itemDeleted == null && cInfo is ChatInfo.Group -> {
-                  DefaultDropdownMenu(showMenu) {
-                    if (cItem.chatDir !is CIDirection.GroupSnd && cInfo.groupInfo.membership.memberRole >= GroupMemberRole.Moderator) {
-                      ArchiveReportItemAction(cItem.id, cInfo.groupInfo.membership.memberActive, showMenu, archiveReports)
-                    }
-                    DeleteItemAction(cItem, revealed, showMenu, questionText = deleteMessageQuestionText(), deleteMessage, deleteMessages, buttonText = stringResource(MR.strings.delete_report))
-                    Divider()
-                    SelectItemAction(showMenu, selectChatItem)
-                  }
-                }
-                cItem.content.msgContent != null && cItem.id >= 0 && !cItem.isReport -> {
+                //cItem.isReport && cItem.meta.itemDeleted == null && cInfo is ChatInfo.Group -> {
+                //  DefaultDropdownMenu(showMenu) {
+                //    if (cItem.chatDir !is CIDirection.GroupSnd && cInfo.groupInfo.membership.memberRole >= GroupMemberRole.Moderator) {
+                //      ArchiveReportItemAction(cItem.id, cInfo.groupInfo.membership.memberActive, showMenu, archiveReports)
+                //    }
+                //    DeleteItemAction(cItem, revealed, showMenu, questionText = deleteMessageQuestionText(), deleteMessage, deleteMessages, buttonText = stringResource(MR.strings.delete_report))
+                //    Divider()
+                //    SelectItemAction(showMenu, selectChatItem)
+                //  }
+                //}
+                //cItem.content.msgContent != null && cItem.id >= 0 && !cItem.isReport -> {
+		// Reporting removed: modified line added below
+                cItem.content.msgContent != null && cItem.id >= 0 -> {
                   DefaultDropdownMenu(showMenu) {
                     if (cInfo.featureEnabled(ChatFeature.Reactions) && cItem.allowAddReaction) {
                       MsgReactionsMenu()
@@ -479,8 +481,8 @@ fun ChatItemView(
                       val groupInfo = cItem.memberToModerate(cInfo)?.first
                       if (groupInfo != null) {
                         ModerateItemAction(cItem, questionText = moderateMessageQuestionText(cInfo.featureEnabled(ChatFeature.FullDelete), 1), showMenu, deleteMessage)
-                      } else if (cItem.meta.itemDeleted == null && cInfo is ChatInfo.Group && cInfo.groupInfo.groupFeatureEnabled(GroupFeature.Reports) && cInfo.groupInfo.membership.memberRole == GroupMemberRole.Member && !live) {
-                        ReportItemAction(cItem, composeState, showMenu)
+                      //} else if (cItem.meta.itemDeleted == null && cInfo is ChatInfo.Group && cInfo.groupInfo.groupFeatureEnabled(GroupFeature.Reports) && cInfo.groupInfo.membership.memberRole == GroupMemberRole.Member && !live) {
+                      //  ReportItemAction(cItem, composeState, showMenu)
                       }
                     }
                     if (cItem.canBeDeletedForSelf) {
@@ -957,102 +959,102 @@ private fun ShrinkItemAction(revealed: State<Boolean>, showMenu: MutableState<Bo
   )
 }
 
-@Composable
-private fun ReportItemAction(
-  cItem: ChatItem,
-  composeState: MutableState<ComposeState>,
-  showMenu: MutableState<Boolean>,
-) {
-  ItemAction(
-    stringResource(MR.strings.report_verb),
-    painterResource(MR.images.ic_flag),
-    onClick = {
-      AlertManager.shared.showAlertDialogButtons(
-        title = generalGetString(MR.strings.report_reason_alert_title),
-        buttons = {
-          ReportReason.supportedReasons.forEach { reason ->
-            SectionItemView({
-              if (composeState.value.editing) {
-                composeState.value = ComposeState(
-                  contextItem = ComposeContextItem.ReportedItem(cItem, reason),
-                  useLinkPreviews = false,
-                  preview = ComposePreview.NoPreview,
-                )
-              } else {
-                composeState.value = composeState.value.copy(
-                  contextItem = ComposeContextItem.ReportedItem(cItem, reason),
-                  useLinkPreviews = false,
-                  preview = ComposePreview.NoPreview,
-                )
-              }
-              AlertManager.shared.hideAlert()
-            }) {
-              Text(reason.text, Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = MaterialTheme.colors.error)
-            }
-          }
-          SectionItemView({
-            AlertManager.shared.hideAlert()
-          }) {
-            Text(stringResource(MR.strings.cancel_verb), Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = MaterialTheme.colors.primary)
-          }
-        }
-      )
-      showMenu.value = false
-    },
-    color = Color.Red
-  )
-}
+//@Composable
+//private fun ReportItemAction(
+//  cItem: ChatItem,
+//  composeState: MutableState<ComposeState>,
+//  showMenu: MutableState<Boolean>,
+//) {
+//  ItemAction(
+//    stringResource(MR.strings.report_verb),
+//    painterResource(MR.images.ic_flag),
+//    onClick = {
+//      AlertManager.shared.showAlertDialogButtons(
+//        title = generalGetString(MR.strings.report_reason_alert_title),
+//        buttons = {
+//          ReportReason.supportedReasons.forEach { reason ->
+//            SectionItemView({
+//              if (composeState.value.editing) {
+//                composeState.value = ComposeState(
+//                  contextItem = ComposeContextItem.ReportedItem(cItem, reason),
+//                  useLinkPreviews = false,
+//                  preview = ComposePreview.NoPreview,
+//                )
+//              } else {
+//                composeState.value = composeState.value.copy(
+//                  contextItem = ComposeContextItem.ReportedItem(cItem, reason),
+//                  useLinkPreviews = false,
+//                  preview = ComposePreview.NoPreview,
+//                )
+//              }
+//              AlertManager.shared.hideAlert()
+//            }) {
+//              Text(reason.text, Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = MaterialTheme.colors.error)
+//            }
+//          }
+//          SectionItemView({
+//            AlertManager.shared.hideAlert()
+//          }) {
+//            Text(stringResource(MR.strings.cancel_verb), Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = MaterialTheme.colors.primary)
+//          }
+//        }
+//      )
+//      showMenu.value = false
+//    },
+//    color = Color.Red
+//  )
+//}
 
-@Composable
-private fun ArchiveReportItemAction(id: Long, allowForAll: Boolean, showMenu: MutableState<Boolean>, archiveReports: (List<Long>, Boolean) -> Unit) {
-  ItemAction(
-    stringResource(MR.strings.archive_report),
-    painterResource(MR.images.ic_inventory_2),
-    onClick = {
-      showArchiveReportsAlert(listOf(id), allowForAll, archiveReports)
-      showMenu.value = false
-    }
-  )
-}
+//@Composable
+//private fun ArchiveReportItemAction(id: Long, allowForAll: Boolean, showMenu: MutableState<Boolean>, archiveReports: (List<Long>, Boolean) -> Unit) {
+//  ItemAction(
+//    stringResource(MR.strings.archive_report),
+//    painterResource(MR.images.ic_inventory_2),
+//    onClick = {
+//      showArchiveReportsAlert(listOf(id), allowForAll, archiveReports)
+//      showMenu.value = false
+//    }
+//  )
+//}
 
-fun showArchiveReportsAlert(ids: List<Long>, allowForAll: Boolean, archiveReports: (List<Long>, Boolean) -> Unit) {
-  AlertManager.shared.showAlertDialogButtonsColumn(
-    title = if (ids.size == 1) {
-      generalGetString(MR.strings.report_archive_alert_title)
-    } else {
-      generalGetString(MR.strings.report_archive_alert_title_nth).format(ids.size)
-    },
-    text = null,
-    buttons = {
-      // Archive for me
-      SectionItemView({
-        AlertManager.shared.hideAlert()
-        archiveReports(ids, false)
-      }) {
-        Text(
-          generalGetString(MR.strings.report_archive_for_me),
-          Modifier.fillMaxWidth(),
-          textAlign = TextAlign.Center,
-          color = MaterialTheme.colors.error
-        )
-      }
-      if (allowForAll) {
-        // Archive for all moderators
-        SectionItemView({
-          AlertManager.shared.hideAlert()
-          archiveReports(ids, true)
-        }) {
-          Text(
-            stringResource(MR.strings.report_archive_for_all_moderators),
-            Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.error
-          )
-        }
-      }
-    }
-  )
-}
+//fun showArchiveReportsAlert(ids: List<Long>, allowForAll: Boolean, archiveReports: (List<Long>, Boolean) -> Unit) {
+//  AlertManager.shared.showAlertDialogButtonsColumn(
+//    title = if (ids.size == 1) {
+//      generalGetString(MR.strings.report_archive_alert_title)
+//    } else {
+//      generalGetString(MR.strings.report_archive_alert_title_nth).format(ids.size)
+//    },
+//    text = null,
+//    buttons = {
+//      // Archive for me
+//      SectionItemView({
+//        AlertManager.shared.hideAlert()
+//        archiveReports(ids, false)
+//      }) {
+//        Text(
+//          generalGetString(MR.strings.report_archive_for_me),
+//          Modifier.fillMaxWidth(),
+//          textAlign = TextAlign.Center,
+//          color = MaterialTheme.colors.error
+//        )
+//      }
+//      if (allowForAll) {
+//        // Archive for all moderators
+//        SectionItemView({
+//          AlertManager.shared.hideAlert()
+//          archiveReports(ids, true)
+//        }) {
+//          Text(
+//            stringResource(MR.strings.report_archive_for_all_moderators),
+//            Modifier.fillMaxWidth(),
+//            textAlign = TextAlign.Center,
+//            color = MaterialTheme.colors.error
+//          )
+//        }
+//      }
+//    }
+//  )
+//}
 
 @Composable
 fun ItemAction(text: String, icon: Painter, color: Color = Color.Unspecified, onClick: () -> Unit) {
@@ -1313,11 +1315,11 @@ fun shapeStyle(chatItem: ChatItem? = null, tailEnabled: Boolean, tailVisible: Bo
   }
 }
 
-private fun closeReportsIfNeeded() {
-  if (appPlatform.isAndroid && ModalManager.end.isLastModalOpen(ModalViewId.GROUP_REPORTS)) {
-    ModalManager.end.closeModals()
-  }
-}
+//private fun closeReportsIfNeeded() {
+//  if (appPlatform.isAndroid && ModalManager.end.isLastModalOpen(ModalViewId.GROUP_REPORTS)) {
+//    ModalManager.end.closeModals()
+//  }
+//}
 
 fun cancelFileAlertDialog(fileId: Long, cancelFile: (Long) -> Unit, cancelAction: CancelAction) {
   AlertManager.shared.showAlertDialog(
@@ -1346,7 +1348,9 @@ fun deleteMessageAlertDialog(chatItem: ChatItem, questionText: String, deleteMes
           deleteMessage(chatItem.id, CIDeleteMode.cidmInternal)
           AlertManager.shared.hideAlert()
         }) { Text(stringResource(MR.strings.for_me_only), color = MaterialTheme.colors.error) }
-        if (chatItem.meta.deletable && !chatItem.localNote && !chatItem.isReport) {
+        //if (chatItem.meta.deletable && !chatItem.localNote && !chatItem.isReport) {
+	// Reporting removed: modified line added below
+        if (chatItem.meta.deletable && !chatItem.localNote) {
           Spacer(Modifier.padding(horizontal = 4.dp))
           TextButton(onClick = {
             deleteMessage(chatItem.id, CIDeleteMode.cidmBroadcast)
@@ -1438,7 +1442,7 @@ fun PreviewChatItemView(
     selectChatItem = {},
     deleteMessage = { _, _ -> },
     deleteMessages = { _ -> },
-    archiveReports = { _, _ -> },
+    //archiveReports = { _, _ -> },
     receiveFile = { _ -> },
     cancelFile = {},
     joinGroup = { _, _ -> },
@@ -1487,7 +1491,7 @@ fun PreviewChatItemViewDeletedContent() {
       selectChatItem = {},
       deleteMessage = { _, _ -> },
       deleteMessages = { _ -> },
-      archiveReports = { _, _ -> },
+      //archiveReports = { _, _ -> },
       receiveFile = { _ -> },
       cancelFile = {},
       joinGroup = { _, _ -> },

@@ -324,7 +324,7 @@ deriving instance Show AChat
 data ChatStats = ChatStats
   { unreadCount :: Int, -- returned both in /_get chat initial API and in /_get chats API
     unreadMentions :: Int, -- returned both in /_get chat initial API and in /_get chats API
-    reportsCount :: Int, -- returned both in /_get chat initial API and in /_get chats API
+--    reportsCount :: Int, -- returned both in /_get chat initial API and in /_get chats API
     minUnreadItemId :: ChatItemId,
     unreadChat :: Bool
   }

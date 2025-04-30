@@ -134,10 +134,10 @@ private fun GroupPreferencesLayout(
     }
 
     SectionDividerSpaced(true, maxBottomPadding = false)
-    val enableReports = remember(preferences) { mutableStateOf(preferences.reports.enable) }
-    FeatureSection(GroupFeature.Reports, enableReports, null, groupInfo, preferences, onTTLUpdated) { enable, _ ->
-      applyPrefs(preferences.copy(reports = GroupPreference(enable = enable)))
-    }
+    //val enableReports = remember(preferences) { mutableStateOf(preferences.reports.enable) }
+    //FeatureSection(GroupFeature.Reports, enableReports, null, groupInfo, preferences, onTTLUpdated) { enable, _ ->
+    //  applyPrefs(preferences.copy(reports = GroupPreference(enable = enable)))
+    //}
     SectionDividerSpaced(true, maxBottomPadding = false)
     val enableHistory = remember(preferences) { mutableStateOf(preferences.history.enable) }
     FeatureSection(GroupFeature.History, enableHistory, null, groupInfo, preferences, onTTLUpdated) { enable, _ ->
@@ -175,7 +175,7 @@ private fun FeatureSection(
         feature.text,
         icon,
         iconTint,
-        disabled = feature == GroupFeature.Reports, // remove in 6.4
+        //disabled = feature == GroupFeature.Reports, // remove in 6.4
         checked = enableFeature.value == GroupFeatureEnabled.ON,
       ) { checked ->
         onSelected(if (checked) GroupFeatureEnabled.ON else GroupFeatureEnabled.OFF, enableForRole?.value)

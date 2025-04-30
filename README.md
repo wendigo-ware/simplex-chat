@@ -11,6 +11,7 @@ This is a super cool fork of the SimpleX client. It is intended to prioritize ce
 - More secure chat preferences (enforced by the receiver)
 - Chat preference spoofing
 - Attempt any action, despite others' chat preferences
+- Implement modular protocol specifications, similar to BIPs or RFCs
 
 **More privacy:**
 - No back doors for leaking unencrypted data, whether it's been "reported" or not

@@ -33,7 +33,7 @@ import chat.simplex.common.model.ChatController.appPrefs
 import chat.simplex.common.model.ChatModel.activeCall
 import chat.simplex.common.model.ChatModel.controller
 import chat.simplex.common.model.ChatModel.withChats
-import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
+//import chat.simplex.common.model.ChatModel.withReportsChatsIfOpen
 import chat.simplex.common.ui.theme.*
 import chat.simplex.common.views.call.*
 import chat.simplex.common.views.chat.group.*
@@ -319,17 +319,17 @@ fun ChatView(
                 }
               }
             },
-            showGroupReports = {
-              val info = activeChatInfo.value ?: return@ChatLayout
-              if (ModalManager.end.hasModalsOpen()) {
-                ModalManager.end.closeModals()
-                return@ChatLayout
-              }
-              hideKeyboard(view)
-              scope.launch {
-                showGroupReportsView(staleChatId, scrollToItemId, info)
-              }
-            },
+            //showGroupReports = {
+            //  val info = activeChatInfo.value ?: return@ChatLayout
+            //  if (ModalManager.end.hasModalsOpen()) {
+            //    ModalManager.end.closeModals()
+            //    return@ChatLayout
+            //  }
+            //  hideKeyboard(view)
+            //  scope.launch {
+            //    showGroupReportsView(staleChatId, scrollToItemId, info)
+            //  }
+            //},
             showMemberInfo = { groupInfo: GroupInfo, member: GroupMember ->
               hideKeyboard(view)
               groupMembersJob.cancel()
@@ -396,24 +396,24 @@ fun ChatView(
                       removeChatItem(chatRh, chatInfo, deletedChatItem)
                     }
                     val deletedItem = deleted.deletedChatItem.chatItem
-                    if (deletedItem.isActiveReport) {
-                      decreaseGroupReportsCounter(chatRh, chatInfo.id)
-                    }
+                    //if (deletedItem.isActiveReport) {
+                    //  decreaseGroupReportsCounter(chatRh, chatInfo.id)
+                    //}
                   }
-                  withReportsChatsIfOpen {
-                    if (deletedChatItem.isReport) {
-                      if (toChatItem != null) {
-                        upsertChatItem(chatRh, chatInfo, toChatItem)
-                      } else {
-                        removeChatItem(chatRh, chatInfo, deletedChatItem)
-                      }
-                    }
-                  }
+                  //withReportsChatsIfOpen {
+                  //  if (deletedChatItem.isReport) {
+                  //    if (toChatItem != null) {
+                  //      upsertChatItem(chatRh, chatInfo, toChatItem)
+                  //    } else {
+                  //      removeChatItem(chatRh, chatInfo, deletedChatItem)
+                  //    }
+                  //  }
+                  //}
                 }
               }
             },
             deleteMessages = { itemIds -> deleteMessages(chatRh, chatInfo, itemIds, false, moderate = false) },
-            archiveReports = { itemIds, forAll -> archiveReports(chatRh, chatInfo, itemIds, forAll) },
+            //archiveReports = { itemIds, forAll -> archiveReports(chatRh, chatInfo, itemIds, forAll) },
             receiveFile = { fileId ->
               withBGApi { chatModel.controller.receiveFile(chatRh, user, fileId) }
             },
@@ -522,11 +522,11 @@ fun ChatView(
                   withChats {
                     updateChatItem(cInfo, updatedCI)
                   }
-                  withReportsChatsIfOpen {
-                    if (cItem.isReport) {
-                      updateChatItem(cInfo, updatedCI)
-                    }
-                  }
+                  //withReportsChatsIfOpen {
+                  //  if (cItem.isReport) {
+                  //    updateChatItem(cInfo, updatedCI)
+                  //  }
+                  //}
                 }
               }
             },
@@ -591,9 +591,9 @@ fun ChatView(
                     itemsIds
                   )
                 }
-                withReportsChatsIfOpen {
-                  markChatItemsRead(chatRh, chatInfo.id, itemsIds)
-                }
+                //withReportsChatsIfOpen {
+                //  markChatItemsRead(chatRh, chatInfo.id, itemsIds)
+                //}
               }
             },
             markChatRead = {
@@ -610,9 +610,9 @@ fun ChatView(
                     chatInfo.apiId
                   )
                 }
-                withReportsChatsIfOpen {
-                  markChatItemsRead(chatRh, chatInfo.id)
-                }
+                //withReportsChatsIfOpen {
+                //  markChatItemsRead(chatRh, chatInfo.id)
+                //}
               }
             },
             changeNtfsState = { enabled, currentValue -> toggleNotifications(chatRh, chatInfo, enabled, chatModel, currentValue) },
@@ -689,12 +689,12 @@ fun ChatLayout(
   selectedChatItems: MutableState<Set<Long>?>,
   back: () -> Unit,
   info: () -> Unit,
-  showGroupReports: () -> Unit,
+  //showGroupReports: () -> Unit,
   showMemberInfo: (GroupInfo, GroupMember) -> Unit,
   loadMessages: suspend (ChatId, ChatPagination, visibleItemIndexesNonReversed: () -> IntRange) -> Unit,
   deleteMessage: (Long, CIDeleteMode) -> Unit,
   deleteMessages: (List<Long>) -> Unit,
-  archiveReports: (List<Long>, Boolean) -> Unit,
+  //archiveReports: (List<Long>, Boolean) -> Unit,
   receiveFile: (Long) -> Unit,
   cancelFile: (Long) -> Unit,
   joinGroup: (Long, () -> Unit) -> Unit,
@@ -768,7 +768,9 @@ fun ChatLayout(
               }) {
                 ChatItemsList(
                   remoteHostId, chatInfo, unreadCount, composeState, composeViewHeight, searchValue,
-                  useLinkPreviews, linkMode, scrollToItemId, selectedChatItems, showMemberInfo, showChatInfo = info, loadMessages, deleteMessage, deleteMessages, archiveReports,
+                  //useLinkPreviews, linkMode, scrollToItemId, selectedChatItems, showMemberInfo, showChatInfo = info, loadMessages, deleteMessage, deleteMessages, archiveReports,
+		  // Reporting removed: next line added
+                  useLinkPreviews, linkMode, scrollToItemId, selectedChatItems, showMemberInfo, showChatInfo = info, loadMessages, deleteMessage, deleteMessages,
                   receiveFile, cancelFile, joinGroup, acceptCall, acceptFeature, openDirectChat, forwardItem,
                   updateContactStats, updateMemberStats, syncContactConnection, syncMemberConnection, findModelChat, findModelMember,
                   setReaction, showItemDetails, markItemsRead, markChatRead, closeSearch, remember { { onComposed(it) } }, developerTools, showViaProxy,
@@ -790,91 +792,117 @@ fun ChatLayout(
               }
             }
           }
-          if (contentTag == MsgContentTag.Report) {
-            Column(
-              Modifier
-                .layoutId(CHAT_COMPOSE_LAYOUT_ID)
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .imePadding()
-            ) {
-              AnimatedVisibility(selectedChatItems.value != null) {
-                if (chatInfo != null) {
-                  SelectedItemsButtonsToolbar(
-                    contentTag = contentTag,
-                    selectedChatItems = selectedChatItems,
-                    chatInfo = chatInfo,
-                    deleteItems = { _ ->
-                      val itemIds = selectedChatItems.value
-                      val questionText = generalGetString(MR.strings.delete_messages_cannot_be_undone_warning)
-                      if (itemIds != null) {
-                        deleteMessagesAlertDialog(itemIds.sorted(), questionText = questionText, forAll = false, deleteMessages = { ids, _ ->
-                          deleteMessages(remoteHostId, chatInfo, ids, false, moderate = false) {
-                            selectedChatItems.value = null
-                          }
-                        })
-                      }
-                    },
-                    archiveItems = { archiveItems(remoteHostId, chatInfo, selectedChatItems) },
-                    moderateItems = {},
-                    forwardItems = {}
-                  )
-                }
-              }
-              if (oneHandUI.value) {
-                // That's placeholder to take some space for bottom app bar in oneHandUI
-                Box(Modifier.height(AppBarHeight * fontSizeSqrtMultiplier))
-              }
-            }
-          } else {
-            Box(
-              Modifier
-                .layoutId(CHAT_COMPOSE_LAYOUT_ID)
-                .align(Alignment.BottomCenter)
-                .imePadding()
-                .navigationBarsPadding()
-                .then(if (oneHandUI.value && chatBottomBar.value) Modifier.padding(bottom = AppBarHeight * fontSizeSqrtMultiplier) else Modifier)
-            ) {
-              composeView(composeViewFocusRequester)
-            }
+          //if (contentTag == MsgContentTag.Report) {
+          //  Column(
+          //    Modifier
+          //      .layoutId(CHAT_COMPOSE_LAYOUT_ID)
+          //      .align(Alignment.BottomCenter)
+          //      .navigationBarsPadding()
+          //      .imePadding()
+          //  ) {
+          //    AnimatedVisibility(selectedChatItems.value != null) {
+          //      if (chatInfo != null) {
+          //        SelectedItemsButtonsToolbar(
+          //          contentTag = contentTag,
+          //          selectedChatItems = selectedChatItems,
+          //          chatInfo = chatInfo,
+          //          deleteItems = { _ ->
+          //            val itemIds = selectedChatItems.value
+          //            val questionText = generalGetString(MR.strings.delete_messages_cannot_be_undone_warning)
+          //            if (itemIds != null) {
+          //              deleteMessagesAlertDialog(itemIds.sorted(), questionText = questionText, forAll = false, deleteMessages = { ids, _ ->
+          //                deleteMessages(remoteHostId, chatInfo, ids, false, moderate = false) {
+          //                  selectedChatItems.value = null
+          //                }
+          //              })
+          //            }
+          //          },
+          //          archiveItems = { archiveItems(remoteHostId, chatInfo, selectedChatItems) },
+          //          moderateItems = {},
+          //          forwardItems = {}
+          //        )
+          //      }
+          //    }
+          //    if (oneHandUI.value) {
+          //      // That's placeholder to take some space for bottom app bar in oneHandUI
+          //      Box(Modifier.height(AppBarHeight * fontSizeSqrtMultiplier))
+          //    }
+          //  }
+          //} else {
+          //  Box(
+          //    Modifier
+          //      .layoutId(CHAT_COMPOSE_LAYOUT_ID)
+          //      .align(Alignment.BottomCenter)
+          //      .imePadding()
+          //      .navigationBarsPadding()
+          //      .then(if (oneHandUI.value && chatBottomBar.value) Modifier.padding(bottom = AppBarHeight * fontSizeSqrtMultiplier) else Modifier)
+          //  ) {
+          //    composeView(composeViewFocusRequester)
+          //  }
+          //}
+	  // Reporting removed: else block above added below
+          Box(
+            Modifier
+              .layoutId(CHAT_COMPOSE_LAYOUT_ID)
+              .align(Alignment.BottomCenter)
+              .imePadding()
+              .navigationBarsPadding()
+              .then(if (oneHandUI.value && chatBottomBar.value) Modifier.padding(bottom = AppBarHeight * fontSizeSqrtMultiplier) else Modifier)
+          ) {
+            composeView(composeViewFocusRequester)
           }
         }
-        val reportsCount = reportsCount(chatInfo?.id)
+        //val reportsCount = reportsCount(chatInfo?.id)
         if (oneHandUI.value && chatBottomBar.value) {
-          if (contentTag == null && reportsCount > 0) {
-            ReportedCountToolbar(reportsCount, withStatusBar = true, showGroupReports)
-          } else {
-            StatusBarBackground()
-          }
+          //if (contentTag == null && reportsCount > 0) {
+          //  ReportedCountToolbar(reportsCount, withStatusBar = true, showGroupReports)
+          //} else {
+          //  StatusBarBackground()
+          //}
+	  // Reporting removed: else block copied below
+          StatusBarBackground()
         } else {
           NavigationBarBackground(true, oneHandUI.value, noAlpha = true)
         }
-        if (contentTag == MsgContentTag.Report) {
-          if (oneHandUI.value) {
-            StatusBarBackground()
-          }
-          Column(if (oneHandUI.value) Modifier.align(Alignment.BottomStart).imePadding() else Modifier) {
-            Box {
-              if (selectedChatItems.value == null) {
-                GroupReportsAppBar(contentTag, { ModalManager.end.closeModal() }, onSearchValueChanged)
-              } else {
-                SelectedItemsCounterToolbar(selectedChatItems, !oneHandUI.value)
+        //if (contentTag == MsgContentTag.Report) {
+        //  if (oneHandUI.value) {
+        //    StatusBarBackground()
+        //  }
+        //  Column(if (oneHandUI.value) Modifier.align(Alignment.BottomStart).imePadding() else Modifier) {
+        //    Box {
+        //      if (selectedChatItems.value == null) {
+        //        GroupReportsAppBar(contentTag, { ModalManager.end.closeModal() }, onSearchValueChanged)
+        //      } else {
+        //        SelectedItemsCounterToolbar(selectedChatItems, !oneHandUI.value)
+        //      }
+        //    }
+        //  }
+        //} else {
+        //  Column(if (oneHandUI.value && chatBottomBar.value) Modifier.align(Alignment.BottomStart).imePadding() else Modifier) {
+        //    Box {
+        //      if (selectedChatItems.value == null) {
+        //        if (chatInfo != null) {
+        //          ChatInfoToolbar(chatInfo, contentTag, back, info, startCall, endCall, addMembers, openGroupLink, changeNtfsState, onSearchValueChanged, showSearch)
+        //        }
+        //      } else {
+        //        SelectedItemsCounterToolbar(selectedChatItems, !oneHandUI.value || !chatBottomBar.value)
+        //      }
+        //    }
+        //    if (contentTag == null && reportsCount > 0 && (!oneHandUI.value || !chatBottomBar.value)) {
+        //      ReportedCountToolbar(reportsCount, withStatusBar = false, showGroupReports)
+        //    }
+        //  }
+        //}
+	// Reporting removed: else block copied below, but not including if
+	// statement related to reportsCount condition.
+        Column(if (oneHandUI.value && chatBottomBar.value) Modifier.align(Alignment.BottomStart).imePadding() else Modifier) {
+          Box {
+            if (selectedChatItems.value == null) {
+              if (chatInfo != null) {
+                ChatInfoToolbar(chatInfo, contentTag, back, info, startCall, endCall, addMembers, openGroupLink, changeNtfsState, onSearchValueChanged, showSearch)
               }
-            }
-          }
-        } else {
-          Column(if (oneHandUI.value && chatBottomBar.value) Modifier.align(Alignment.BottomStart).imePadding() else Modifier) {
-            Box {
-              if (selectedChatItems.value == null) {
-                if (chatInfo != null) {
-                  ChatInfoToolbar(chatInfo, contentTag, back, info, startCall, endCall, addMembers, openGroupLink, changeNtfsState, onSearchValueChanged, showSearch)
-                }
-              } else {
-                SelectedItemsCounterToolbar(selectedChatItems, !oneHandUI.value || !chatBottomBar.value)
-              }
-            }
-            if (contentTag == null && reportsCount > 0 && (!oneHandUI.value || !chatBottomBar.value)) {
-              ReportedCountToolbar(reportsCount, withStatusBar = false, showGroupReports)
+            } else {
+              SelectedItemsCounterToolbar(selectedChatItems, !oneHandUI.value || !chatBottomBar.value)
             }
           }
         }
@@ -1105,37 +1133,37 @@ fun ChatInfoToolbarTitle(cInfo: ChatInfo, imageSize: Dp = 40.dp, iconColor: Colo
 }
 
 @Composable
-private fun ReportedCountToolbar(
-  reportsCount: Int,
-  withStatusBar: Boolean,
-  showGroupReports: () -> Unit
-) {
-  Box {
-    val statusBarPadding = if (withStatusBar) WindowInsets.statusBars.asPaddingValues().calculateTopPadding() else 0.dp
-    Row(
-      Modifier
-        .fillMaxWidth()
-        .height(AppBarHeight * fontSizeSqrtMultiplier + statusBarPadding)
-        .background(MaterialTheme.colors.background)
-        .clickable(onClick = showGroupReports)
-        .padding(top = statusBarPadding),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center
-    ) {
-      Icon(painterResource(MR.images.ic_flag), null, Modifier.size(22.dp), tint = MaterialTheme.colors.error)
-      Spacer(Modifier.width(4.dp))
-      Text(
-        if (reportsCount == 1) {
-          stringResource(MR.strings.group_reports_active_one)
-        } else {
-          stringResource(MR.strings.group_reports_active).format(reportsCount)
-        },
-        style = MaterialTheme.typography.button
-      )
-    }
-    Divider(Modifier.align(Alignment.BottomStart))
-  }
-}
+//private fun ReportedCountToolbar(
+//  reportsCount: Int,
+//  withStatusBar: Boolean,
+//  showGroupReports: () -> Unit
+//) {
+//  Box {
+//    val statusBarPadding = if (withStatusBar) WindowInsets.statusBars.asPaddingValues().calculateTopPadding() else 0.dp
+//    Row(
+//      Modifier
+//        .fillMaxWidth()
+//        .height(AppBarHeight * fontSizeSqrtMultiplier + statusBarPadding)
+//        .background(MaterialTheme.colors.background)
+//        .clickable(onClick = showGroupReports)
+//        .padding(top = statusBarPadding),
+//      verticalAlignment = Alignment.CenterVertically,
+//      horizontalArrangement = Arrangement.Center
+//    ) {
+//      Icon(painterResource(MR.images.ic_flag), null, Modifier.size(22.dp), tint = MaterialTheme.colors.error)
+//      Spacer(Modifier.width(4.dp))
+//      Text(
+//        if (reportsCount == 1) {
+//          stringResource(MR.strings.group_reports_active_one)
+//        } else {
+//          stringResource(MR.strings.group_reports_active).format(reportsCount)
+//        },
+//        style = MaterialTheme.typography.button
+//      )
+//    }
+//    Divider(Modifier.align(Alignment.BottomStart))
+//  }
+//}
 
 @Composable
 private fun ContactVerifiedShield() {
@@ -1143,7 +1171,7 @@ private fun ContactVerifiedShield() {
 }
 
 /** Saves current scroll position when group reports are open and user opens [ChatItemInfoView], for example, and goes back */
-private var reportsListState: LazyListState? = null
+//private var reportsListState: LazyListState? = null
 
 @Composable
 fun BoxScope.ChatItemsList(
@@ -1162,7 +1190,7 @@ fun BoxScope.ChatItemsList(
   loadMessages: suspend (ChatId, ChatPagination, visibleItemIndexesNonReversed: () -> IntRange) -> Unit,
   deleteMessage: (Long, CIDeleteMode) -> Unit,
   deleteMessages: (List<Long>) -> Unit,
-  archiveReports: (List<Long>, Boolean) -> Unit,
+  //archiveReports: (List<Long>, Boolean) -> Unit,
   receiveFile: (Long) -> Unit,
   cancelFile: (Long) -> Unit,
   joinGroup: (Long, () -> Unit) -> Unit,
@@ -1212,8 +1240,12 @@ fun BoxScope.ChatItemsList(
     }
   }
   val reversedChatItems = remember { derivedStateOf { chatModel.chatItemsForContent(contentTag).value.asReversed() } }
-  val reportsCount = reportsCount(chatInfo.id)
-  val topPaddingToContent = topPaddingToContent(chatView = contentTag == null, contentTag == null && reportsCount > 0)
+  //val reportsCount = reportsCount(chatInfo.id)
+  //val topPaddingToContent = topPaddingToContent(chatView = contentTag == null, contentTag == null && reportsCount > 0)
+  // Reporting removed: next line added w/ `reportsCount > 0` condition changed
+  // to `false`, because I dunno yet if `topPaddingToContent` will work as
+  // expected without passing in that second bool argument.
+  val topPaddingToContent = topPaddingToContent(chatView = contentTag == null, false)
   val topPaddingToContentPx = rememberUpdatedState(with(LocalDensity.current) { topPaddingToContent.roundToPx() })
   val numberOfBottomAppBars = numberOfBottomAppBars()
   /** determines height based on window info and static height of two AppBars. It's needed because in the first graphic frame height of
@@ -1234,22 +1266,24 @@ fun BoxScope.ChatItemsList(
   val listState = rememberUpdatedState(rememberSaveable(chatInfo.id, searchValueIsEmpty.value, resetListState.value, saver = LazyListState.Saver) {
     val openAroundItemId = chatModel.openAroundItemId.value
     val index = mergedItems.value.indexInParentItems[openAroundItemId] ?: mergedItems.value.items.indexOfLast { it.hasUnread() }
-    val reportsState = reportsListState
+    //val reportsState = reportsListState
     if (openAroundItemId != null) {
       highlightedItems.value += openAroundItemId
       chatModel.openAroundItemId.value = null
     }
     hoveredItemId.value = null
-    if (reportsState != null) {
-      reportsListState = null
-      reportsState
-    } else if (index <= 0 || !searchValueIsEmpty.value) {
+    //if (reportsState != null) {
+    //  reportsListState = null
+    //  reportsState
+    //} else if (index <= 0 || !searchValueIsEmpty.value) {
+    // Reporting removed: second `if` condition copied below as first condition
+    if (index <= 0 || !searchValueIsEmpty.value) {
       LazyListState(0, 0)
     } else {
       LazyListState(index + 1, -maxHeightForList.value)
     }
   })
-  SaveReportsStateOnDispose(listState)
+  //SaveReportsStateOnDispose(listState)
   val maxHeight = remember { derivedStateOf { listState.value.layoutInfo.viewportEndOffset - topPaddingToContentPx.value } }
   val loadingMoreItems = remember { mutableStateOf(false) }
   val animatedScrollingInProgress = remember { mutableStateOf(false) }
@@ -1278,7 +1312,7 @@ fun BoxScope.ChatItemsList(
   val scope = rememberCoroutineScope()
   val scrollToItem: (Long) -> Unit = remember {
     // In group reports just set the itemId to scroll to so the main ChatView will handle scrolling
-    if (contentTag == MsgContentTag.Report) return@remember { scrollToItemId.value = it }
+    //if (contentTag == MsgContentTag.Report) return@remember { scrollToItemId.value = it }
     scrollToItem(searchValue, loadingMoreItems, animatedScrollingInProgress, highlightedItems, chatInfoUpdated, maxHeight, scope, reversedChatItems, mergedItems, listState, loadMessages)
   }
   val scrollToQuotedItemFromItem: (Long) -> Unit = remember { findQuotedItemFromItem(remoteHostIdUpdated, chatInfoUpdated, scope, scrollToItem, contentTag) }
@@ -1348,7 +1382,9 @@ fun BoxScope.ChatItemsList(
                   highlightedItems.value = setOf()
                 }
             }
-            ChatItemView(remoteHostId, chatInfo, cItem, composeState, provider, useLinkPreviews = useLinkPreviews, linkMode = linkMode, revealed = revealed, highlighted = highlighted, hoveredItemId = hoveredItemId, range = range, searchIsNotBlank = searchValueIsNotBlank, fillMaxWidth = fillMaxWidth, selectedChatItems = selectedChatItems, selectChatItem = { selectUnselectChatItem(true, cItem, revealed, selectedChatItems, reversedChatItems) }, deleteMessage = deleteMessage, deleteMessages = deleteMessages, archiveReports = archiveReports, receiveFile = receiveFile, cancelFile = cancelFile, joinGroup = joinGroup, acceptCall = acceptCall, acceptFeature = acceptFeature, openDirectChat = openDirectChat, forwardItem = forwardItem, updateContactStats = updateContactStats, updateMemberStats = updateMemberStats, syncContactConnection = syncContactConnection, syncMemberConnection = syncMemberConnection, findModelChat = findModelChat, findModelMember = findModelMember, scrollToItem = scrollToItem, scrollToQuotedItemFromItem = scrollToQuotedItemFromItem, setReaction = setReaction, showItemDetails = showItemDetails, reveal = reveal, showMemberInfo = showMemberInfo, showChatInfo = showChatInfo, developerTools = developerTools, showViaProxy = showViaProxy, itemSeparation = itemSeparation, showTimestamp = itemSeparation.timestamp)
+            //ChatItemView(remoteHostId, chatInfo, cItem, composeState, provider, useLinkPreviews = useLinkPreviews, linkMode = linkMode, revealed = revealed, highlighted = highlighted, hoveredItemId = hoveredItemId, range = range, searchIsNotBlank = searchValueIsNotBlank, fillMaxWidth = fillMaxWidth, selectedChatItems = selectedChatItems, selectChatItem = { selectUnselectChatItem(true, cItem, revealed, selectedChatItems, reversedChatItems) }, deleteMessage = deleteMessage, deleteMessages = deleteMessages, archiveReports = archiveReports, receiveFile = receiveFile, cancelFile = cancelFile, joinGroup = joinGroup, acceptCall = acceptCall, acceptFeature = acceptFeature, openDirectChat = openDirectChat, forwardItem = forwardItem, updateContactStats = updateContactStats, updateMemberStats = updateMemberStats, syncContactConnection = syncContactConnection, syncMemberConnection = syncMemberConnection, findModelChat = findModelChat, findModelMember = findModelMember, scrollToItem = scrollToItem, scrollToQuotedItemFromItem = scrollToQuotedItemFromItem, setReaction = setReaction, showItemDetails = showItemDetails, reveal = reveal, showMemberInfo = showMemberInfo, showChatInfo = showChatInfo, developerTools = developerTools, showViaProxy = showViaProxy, itemSeparation = itemSeparation, showTimestamp = itemSeparation.timestamp)
+	    // Reporting removed: next line added, and what a long fucking line!
+            ChatItemView(remoteHostId, chatInfo, cItem, composeState, provider, useLinkPreviews = useLinkPreviews, linkMode = linkMode, revealed = revealed, highlighted = highlighted, hoveredItemId = hoveredItemId, range = range, searchIsNotBlank = searchValueIsNotBlank, fillMaxWidth = fillMaxWidth, selectedChatItems = selectedChatItems, selectChatItem = { selectUnselectChatItem(true, cItem, revealed, selectedChatItems, reversedChatItems) }, deleteMessage = deleteMessage, deleteMessages = deleteMessages, receiveFile = receiveFile, cancelFile = cancelFile, joinGroup = joinGroup, acceptCall = acceptCall, acceptFeature = acceptFeature, openDirectChat = openDirectChat, forwardItem = forwardItem, updateContactStats = updateContactStats, updateMemberStats = updateMemberStats, syncContactConnection = syncContactConnection, syncMemberConnection = syncMemberConnection, findModelChat = findModelChat, findModelMember = findModelMember, scrollToItem = scrollToItem, scrollToQuotedItemFromItem = scrollToQuotedItemFromItem, setReaction = setReaction, showItemDetails = showItemDetails, reveal = reveal, showMemberInfo = showMemberInfo, showChatInfo = showChatInfo, developerTools = developerTools, showViaProxy = showViaProxy, itemSeparation = itemSeparation, showTimestamp = itemSeparation.timestamp)
           }
         }
 
@@ -1357,7 +1393,9 @@ fun BoxScope.ChatItemsList(
           val dismissState = rememberDismissState(initialValue = DismissValue.Default) {
             if (it == DismissValue.DismissedToStart) {
               itemScope.launch {
-                if ((cItem.content is CIContent.SndMsgContent || cItem.content is CIContent.RcvMsgContent) && chatInfo !is ChatInfo.Local && !cItem.isReport) {
+                //if ((cItem.content is CIContent.SndMsgContent || cItem.content is CIContent.RcvMsgContent) && chatInfo !is ChatInfo.Local && !cItem.isReport) {
+		// Reporting removed: next line added
+                if ((cItem.content is CIContent.SndMsgContent || cItem.content is CIContent.RcvMsgContent) && chatInfo !is ChatInfo.Local) {
                   if (composeState.value.editing) {
                     composeState.value = ComposeState(contextItem = ComposeContextItem.QuotedItem(cItem), useLinkPreviews = useLinkPreviews)
                   } else if (cItem.id != ChatItem.TEMP_LIVE_CHAT_ITEM_ID) {
@@ -1554,7 +1592,11 @@ fun BoxScope.ChatItemsList(
     ),
     reverseLayout = true,
     additionalBarOffset = composeViewHeight,
-    additionalTopBar = rememberUpdatedState(contentTag == null && reportsCount > 0),
+    //additionalTopBar = rememberUpdatedState(contentTag == null && reportsCount > 0),
+    // Reporting removed: next line added with `reportsCount > 0` condition
+    // changed to `false`, cuz I dunno yet if `rememberUpdatedState` will work
+    // as expected without passing that bool argument
+    additionalTopBar = rememberUpdatedState(false),
     chatBottomBar = remember { appPrefs.chatBottomBar.state }
   ) {
     val mergedItemsValue = mergedItems.value
@@ -2011,11 +2053,15 @@ private fun TopEndFloatingButton(
 fun topPaddingToContent(chatView: Boolean, additionalTopBar: Boolean = false): Dp {
   val oneHandUI = remember { appPrefs.oneHandUI.state }
   val chatBottomBar = remember { appPrefs.chatBottomBar.state }
-  val reportsPadding = if (additionalTopBar) AppBarHeight * fontSizeSqrtMultiplier else 0.dp
+  //val reportsPadding = if (additionalTopBar) AppBarHeight * fontSizeSqrtMultiplier else 0.dp
   return if (oneHandUI.value && (!chatView || chatBottomBar.value)) {
-    WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + reportsPadding
+    //WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + reportsPadding
+    // Reporting removed: next line added
+    WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
   } else {
-    AppBarHeight * fontSizeSqrtMultiplier + WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + reportsPadding
+    //AppBarHeight * fontSizeSqrtMultiplier + WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + reportsPadding
+    // Reporting removed: next line added
+    AppBarHeight * fontSizeSqrtMultiplier + WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
   }
 }
 
@@ -2124,15 +2170,15 @@ private fun FloatingDate(
   }
 }
 
-@Composable
-private fun SaveReportsStateOnDispose(listState: State<LazyListState>) {
-  val contentTag = LocalContentTag.current
-  DisposableEffect(Unit) {
-    onDispose {
-      reportsListState = if (contentTag == MsgContentTag.Report && ModalManager.end.hasModalOpen(ModalViewId.GROUP_REPORTS)) listState.value else null
-    }
-  }
-}
+//@Composable
+//private fun SaveReportsStateOnDispose(listState: State<LazyListState>) {
+//  val contentTag = LocalContentTag.current
+//  DisposableEffect(Unit) {
+//    onDispose {
+//      reportsListState = if (contentTag == MsgContentTag.Report && ModalManager.end.hasModalOpen(ModalViewId.GROUP_REPORTS)) listState.value else null
+//    }
+//  }
+//}
 
 @Composable
 private fun DownloadFilesButton(
@@ -2231,14 +2277,14 @@ private fun MarkItemsReadAfterDelay(
   }
 }
 
-@Composable
-fun reportsCount(staleChatId: String?): Int {
-  return if (staleChatId?.startsWith("#") != true) {
-    0
-  } else {
-    remember(staleChatId) { derivedStateOf { chatModel.chats.value.firstOrNull { chat -> chat.chatInfo.id == staleChatId }?.chatStats } }.value?.reportsCount ?: 0
-  }
-}
+//@Composable
+//fun reportsCount(staleChatId: String?): Int {
+//  return if (staleChatId?.startsWith("#") != true) {
+//    0
+//  } else {
+//    remember(staleChatId) { derivedStateOf { chatModel.chats.value.firstOrNull { chat -> chat.chatInfo.id == staleChatId }?.chatStats } }.value?.reportsCount ?: 0
+//  }
+//}
 
 private fun reversedChatItemsStatic(contentTag: MsgContentTag?): List<ChatItem> =
   chatModel.chatItemsForContent(contentTag).value.asReversed()
@@ -2329,9 +2375,9 @@ private fun findQuotedItemFromItem(
       withChats {
         updateChatItem(chatInfo.value, item)
       }
-      withReportsChatsIfOpen {
-        updateChatItem(chatInfo.value, item)
-      }
+      //withReportsChatsIfOpen {
+      //  updateChatItem(chatInfo.value, item)
+      //}
       if (item.quotedItem?.itemId != null) {
         scrollToItem(item.quotedItem.itemId)
       } else {
@@ -2519,80 +2565,80 @@ private fun deleteMessages(chatRh: Long?, chatInfo: ChatInfo, itemIds: List<Long
               removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
             }
             val deletedItem = di.deletedChatItem.chatItem
-            if (deletedItem.isActiveReport) {
-              decreaseGroupReportsCounter(chatRh, chatInfo.id)
-            }
+            //if (deletedItem.isActiveReport) {
+            //  decreaseGroupReportsCounter(chatRh, chatInfo.id)
+            //}
           }
         }
-        withReportsChatsIfOpen {
-          for (di in deleted) {
-            if (di.deletedChatItem.chatItem.isReport) {
-              val toChatItem = di.toChatItem?.chatItem
-              if (toChatItem != null) {
-                upsertChatItem(chatRh, chatInfo, toChatItem)
-              } else {
-                removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
-              }
-            }
-          }
-        }
+        //withReportsChatsIfOpen {
+        //  for (di in deleted) {
+        //    if (di.deletedChatItem.chatItem.isReport) {
+        //      val toChatItem = di.toChatItem?.chatItem
+        //      if (toChatItem != null) {
+        //        upsertChatItem(chatRh, chatInfo, toChatItem)
+        //      } else {
+        //        removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
+        //      }
+        //    }
+        //  }
+        //}
         onSuccess()
       }
     }
   }
 }
 
-private fun archiveReports(chatRh: Long?, chatInfo: ChatInfo, itemIds: List<Long>, forAll: Boolean, onSuccess: () -> Unit = {}) {
-  if (itemIds.isNotEmpty()) {
-    withBGApi {
-      val deleted = chatModel.controller.apiDeleteReceivedReports(
-        chatRh,
-        groupId = chatInfo.apiId,
-        itemIds = itemIds,
-        mode = if (forAll) CIDeleteMode.cidmBroadcast else CIDeleteMode.cidmInternalMark
-      )
-      if (deleted != null) {
-        withChats {
-          for (di in deleted) {
-            val toChatItem = di.toChatItem?.chatItem
-            if (toChatItem != null) {
-              upsertChatItem(chatRh, chatInfo, toChatItem)
-            } else {
-              removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
-            }
-            val deletedItem = di.deletedChatItem.chatItem
-            if (deletedItem.isActiveReport) {
-              decreaseGroupReportsCounter(chatRh, chatInfo.id)
-            }
-          }
-        }
-        withReportsChatsIfOpen {
-          for (di in deleted) {
-            if (di.deletedChatItem.chatItem.isReport) {
-              val toChatItem = di.toChatItem?.chatItem
-              if (toChatItem != null) {
-                upsertChatItem(chatRh, chatInfo, toChatItem)
-              } else {
-                removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
-              }
-            }
-          }
-        }
-        onSuccess()
-      }
-    }
-  }
-}
+//private fun archiveReports(chatRh: Long?, chatInfo: ChatInfo, itemIds: List<Long>, forAll: Boolean, onSuccess: () -> Unit = {}) {
+//  if (itemIds.isNotEmpty()) {
+//    withBGApi {
+//      val deleted = chatModel.controller.apiDeleteReceivedReports(
+//        chatRh,
+//        groupId = chatInfo.apiId,
+//        itemIds = itemIds,
+//        mode = if (forAll) CIDeleteMode.cidmBroadcast else CIDeleteMode.cidmInternalMark
+//      )
+//      if (deleted != null) {
+//        withChats {
+//          for (di in deleted) {
+//            val toChatItem = di.toChatItem?.chatItem
+//            if (toChatItem != null) {
+//              upsertChatItem(chatRh, chatInfo, toChatItem)
+//            } else {
+//              removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
+//            }
+//            val deletedItem = di.deletedChatItem.chatItem
+//            if (deletedItem.isActiveReport) {
+//              decreaseGroupReportsCounter(chatRh, chatInfo.id)
+//            }
+//          }
+//        }
+//        withReportsChatsIfOpen {
+//          for (di in deleted) {
+//            if (di.deletedChatItem.chatItem.isReport) {
+//              val toChatItem = di.toChatItem?.chatItem
+//              if (toChatItem != null) {
+//                upsertChatItem(chatRh, chatInfo, toChatItem)
+//              } else {
+//                removeChatItem(chatRh, chatInfo, di.deletedChatItem.chatItem)
+//              }
+//            }
+//          }
+//        }
+//        onSuccess()
+//      }
+//    }
+//  }
+//}
 
 private fun archiveItems(rhId: Long?, chatInfo: ChatInfo, selectedChatItems: MutableState<Set<Long>?>) {
   val itemIds = selectedChatItems.value
-  if (itemIds != null) {
-    showArchiveReportsAlert(itemIds.sorted(), chatInfo is ChatInfo.Group && chatInfo.groupInfo.membership.memberActive, archiveReports = { ids, forAll ->
-      archiveReports(rhId, chatInfo, ids, forAll) {
-        selectedChatItems.value = null
-      }
-    })
-  }
+  //if (itemIds != null) {
+  //  showArchiveReportsAlert(itemIds.sorted(), chatInfo is ChatInfo.Group && chatInfo.groupInfo.membership.memberActive, archiveReports = { ids, forAll ->
+  //    archiveReports(rhId, chatInfo, ids, forAll) {
+  //      selectedChatItems.value = null
+  //    }
+  //  })
+  //}
 }
 
 private fun markUnreadChatAsRead(chatId: String) {
@@ -2940,12 +2986,12 @@ fun PreviewChatLayout() {
       selectedChatItems = remember { mutableStateOf(setOf()) },
       back = {},
       info = {},
-      showGroupReports = {},
+      //showGroupReports = {},
       showMemberInfo = { _, _ -> },
       loadMessages = { _, _, _ -> },
       deleteMessage = { _, _ -> },
       deleteMessages = { _ -> },
-      archiveReports = { _, _ -> },
+      //archiveReports = { _, _ -> },
       receiveFile = { _ -> },
       cancelFile = {},
       joinGroup = { _, _ -> },
@@ -3017,12 +3063,12 @@ fun PreviewGroupChatLayout() {
       selectedChatItems = remember { mutableStateOf(setOf()) },
       back = {},
       info = {},
-      showGroupReports = {},
+      //showGroupReports = {},
       showMemberInfo = { _, _ -> },
       loadMessages = { _, _, _ -> },
       deleteMessage = { _, _ -> },
       deleteMessages = {},
-      archiveReports = { _, _ -> },
+      //archiveReports = { _, _ -> },
       receiveFile = { _ -> },
       cancelFile = {},
       joinGroup = { _, _ -> },

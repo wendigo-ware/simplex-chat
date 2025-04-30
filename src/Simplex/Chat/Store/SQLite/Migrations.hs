@@ -121,7 +121,7 @@ import Simplex.Chat.Store.SQLite.Migrations.M20241128_business_chats
 import Simplex.Chat.Store.SQLite.Migrations.M20241205_business_chat_members
 import Simplex.Chat.Store.SQLite.Migrations.M20241222_operator_conditions
 import Simplex.Chat.Store.SQLite.Migrations.M20241223_chat_tags
-import Simplex.Chat.Store.SQLite.Migrations.M20241230_reports
+--import Simplex.Chat.Store.SQLite.Migrations.M20241230_reports
 import Simplex.Chat.Store.SQLite.Migrations.M20250105_indexes
 import Simplex.Chat.Store.SQLite.Migrations.M20250115_chat_ttl
 import Simplex.Chat.Store.SQLite.Migrations.M20250122_chat_items_include_in_history
@@ -249,7 +249,7 @@ schemaMigrations =
     ("20241205_business_chat_members", m20241205_business_chat_members, Just down_m20241205_business_chat_members),
     ("20241222_operator_conditions", m20241222_operator_conditions, Just down_m20241222_operator_conditions),
     ("20241223_chat_tags", m20241223_chat_tags, Just down_m20241223_chat_tags),
-    ("20241230_reports", m20241230_reports, Just down_m20241230_reports),
+    --("20241230_reports", m20241230_reports, Just down_m20241230_reports),
     ("20250105_indexes", m20250105_indexes, Just down_m20250105_indexes),
     ("20250115_chat_ttl", m20250115_chat_ttl, Just down_m20250115_chat_ttl),
     ("20250122_chat_items_include_in_history", m20250122_chat_items_include_in_history, Just down_m20250122_chat_items_include_in_history),

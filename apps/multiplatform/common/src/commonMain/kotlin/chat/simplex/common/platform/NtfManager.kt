@@ -135,11 +135,13 @@ abstract class NtfManager {
       res
     } else {
       val mc = cItem.content.msgContent
-      if (mc is MsgContent.MCReport) {
-        generalGetString(MR.strings.notification_group_report).format(cItem.text.ifEmpty { mc.reason.text })
-      } else {
-        cItem.text
-      }
+      //if (mc is MsgContent.MCReport) {
+      //  generalGetString(MR.strings.notification_group_report).format(cItem.text.ifEmpty { mc.reason.text })
+      //} else {
+      //  cItem.text
+      //}
+      // Content reports removed: no more MsgContent.MCReport. Adding next line:
+      cItem.text
     }
   }
 }
