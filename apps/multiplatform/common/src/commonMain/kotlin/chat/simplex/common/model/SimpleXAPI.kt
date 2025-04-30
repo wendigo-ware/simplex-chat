@@ -3982,6 +3982,18 @@ data class ServerOperatorInfo(
   val largeLogoDarkMode: ImageResource
 )
 val operatorsInfo: Map<OperatorTag, ServerOperatorInfo> = mapOf(
+  OperatorTag.Community to ServerOperatorInfo(
+    description = listOf(
+      "This is collection of public, community-run servers in the decentralized SimpleX network.",
+      "Using these servers reduces your reliance on the major network operators and improves the decentralization of the SimpleX network.",
+      "See the link below for an unofficial directory of similar community-run servers."
+    ),
+    website = "https://simplex-directory.asriyan.me",
+    logo = MR.images.decentralized,
+    largeLogo = MR.images.logo,
+    logoDarkMode = MR.images.decentralized_light,
+    largeLogoDarkMode = MR.images.logo_light
+  ),
   OperatorTag.SimpleX to ServerOperatorInfo(
     description = listOf(
       "SimpleX Chat is the first communication network that has no user profile IDs of any kind, not even random numbers or keys that identify the users.",

@@ -1309,6 +1309,19 @@ public struct ServerOperatorInfo {
 }
 
 public let operatorsInfo: Dictionary<OperatorTag, ServerOperatorInfo> = [
+    .community: ServerOperatorInfo(
+        description: [
+            "This is collection of public, community-run servers in the decentralized SimpleX network.",
+            "Using these servers reduces your reliance on the major network operators and improves the decentralization of the SimpleX network.",
+            "See the link below for an unofficial directory of similar community-run servers."
+
+        ],
+        website: URL(string: "https://simplex-directory.asriyan.me")!,
+        logo: "decentralized",
+        largeLogo: "logo",
+        logoDarkMode: "decentralized-light",
+        largeLogoDarkMode: "logo-light"
+    ),
     .simplex: ServerOperatorInfo(
         description: [
             "SimpleX Chat is the first communication network that has no user profile IDs of any kind, not even random numbers or identity keys.",

@@ -95,7 +95,7 @@ type DBEntityId = DBEntityId' 'DBStored
 
 type DBNewEntity = DBEntityId' 'DBNew
 
-data OperatorTag = OTSimplex | OTFlux
+data OperatorTag = OTCommunity | OTSimplex | OTFlux
   deriving (Eq, Ord, Show)
 
 instance FromField OperatorTag where fromField = fromTextField_ textDecode
@@ -111,10 +111,12 @@ instance ToJSON OperatorTag where
 
 instance TextEncoding OperatorTag where
   textDecode = \case
+    "community" -> Just OTCommunity
     "simplex" -> Just OTSimplex
     "flux" -> Just OTFlux
     _ -> Nothing
   textEncode = \case
+    OTCommunity -> "community"
     OTSimplex -> "simplex"
     OTFlux -> "flux"
 

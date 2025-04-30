@@ -374,7 +374,7 @@ defaultChatPrefs :: FullPreferences
 defaultChatPrefs =
   FullPreferences
     { timedMessages = TimedMessagesPreference {allow = FAYes, ttl = Nothing},
-      fullDelete = FullDeletePreference {allow = FANo},
+      fullDelete = FullDeletePreference {allow = FAYes},
       reactions = ReactionsPreference {allow = FAYes},
       voice = VoicePreference {allow = FAYes},
       calls = CallsPreference {allow = FAYes}

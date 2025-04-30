@@ -51,6 +51,20 @@ import qualified Simplex.Messaging.TMap as TM
 import qualified UnliftIO.Exception as E
 import UnliftIO.STM
 
+operatorCommunity :: NewServerOperator
+operatorCommunity =
+  ServerOperator
+    { operatorId = DBNewEntity,
+      operatorTag = Just OTCommunity,
+      tradeName = "Community",
+      legalName = Just "Public community-run servers",
+      serverDomains = [""],
+      conditionsAcceptance = CARequired Nothing,
+      enabled = True,
+      smpRoles = allRoles,
+      xftpRoles = allRoles
+    }
+
 operatorSimpleXChat :: NewServerOperator
 operatorSimpleXChat =
   ServerOperator
@@ -61,8 +75,8 @@ operatorSimpleXChat =
       serverDomains = ["simplex.im"],
       conditionsAcceptance = CARequired Nothing,
       enabled = True,
-      smpRoles = allRoles,
-      xftpRoles = allRoles
+      smpRoles = ServerRoles {storage = False, proxy = True},
+      xftpRoles = ServerRoles {storage = False, proxy = True}
     }
 
 operatorFlux :: NewServerOperator
@@ -74,7 +88,7 @@ operatorFlux =
       legalName = Just "InFlux Technologies Limited",
       serverDomains = ["simplexonflux.com"],
       conditionsAcceptance = CARequired Nothing,
-      enabled = False,
+      enabled = True,
       smpRoles = ServerRoles {storage = False, proxy = True},
       xftpRoles = ServerRoles {storage = False, proxy = True}
     }
@@ -94,7 +108,15 @@ defaultChatConfig =
       presetServers =
         PresetServers
           { operators =
-              [ PresetOperator
+              [
+                PresetOperator
+                  { operator = Just operatorCommunity,
+                    smp = communitySMPServers,
+                    useSMP = 5,
+                    xftp = communityXFTPServers,
+                    useXFTP = 2
+                  }
+	        PresetOperator
                   { operator = Just operatorSimpleXChat,
                     smp = simplexChatSMPServers,
                     useSMP = 4,
@@ -132,6 +154,45 @@ defaultChatConfig =
       deviceNameForRemote = "",
       chatHooks = defaultChatHooks
     }
+
+communitySMPServers :: [NewUserServer 'PSMP]
+communitySMPServers =
+  map
+    (presetServer True)
+    [
+      "smp://uDH4cu81seeKT_rnrLMprQ6jwsnHY12awH8JP0gfIfc=@154.26.139.40",
+      "smp://DQPf8YJIoQlGxy29JCTqM1EbzyIkfsHtWIKvG7vvRPY=@flaviohg.com:5223",
+      "smp://L5jrGV2L_Bb20Oj0aE4Gn-m5AHet9XdpYDotiqpcpGc=@nowhere.moe",
+      "smp://HWK6x65IcNpRyGDQUtOMSSofcQv2D72-NbEmqg-SwAE=@smp.sethforprivacy.com",
+      "smp://lqZ_TJG0WgPNqtl7Lr0Jg3kRtoFDj2TRgfLCkwN8zmc=@smp.roli.cloud",
+      "smp://KO7hwMqeal3RmpOmt_1xGRwWh723vbDMmuyYxC6tfKM=@smp1.taurix.net",
+      "smp://nfm-LwDDqi9KDPzebYMbriFXdbE3cHvcfHeEhS-1230=@5.78.46.41:5223",
+      "smp://jA736UwbVG_LKSQyi9tr8LZOxgqBIQTJgbi7jgAGJhM=@thebunny.zone",
+      "smp://esPsfRFGZd2TRyKijJDorCMo3Ld-QD8Cq8ASx8qrY_Q=@simplex.hackliberty.org",
+      "smp://WIcXQDL2CfOBZ07pEqYYscXC9FGERdvhoa0fsMVSmck=@84.252.121.189:5223",
+      "smp://h4MewB8U5RQCbzAPSPlCgd47MlhBtQhYeP4Bc5YZs3U=@smp1.asriyan.me:5223",
+      "smp://BEj9mUrXWFDemMm0j2s3jMpjakf1YscC8QcY-4TV9j4=@grsim.cyberhornet.net",
+      "smp://umTAbfb-2eghd2fNcUjmpAPW_UUHzTwWmWt_Kr3egsY=@simplex.hanshan.io:5223",
+      "smp://xFUZI6QJsnskAexEdS343244eNDvytHNwP-LbBQmOwI=@smp1.adminforge.de",
+      "smp://HZOF26feHaaMXqYuLTzhBFB652DEYENZEN8zpLxIeKs=@simplex.notrustverify.ch",
+      "smp://7T05Y3ZNHlYhhUK6QieYwsYAY4SpuTtwD-ZEweQ91U4=@89.35.131.127",
+      "smp://9ld0P9a1pQyDloXk4drUAIqUUBo5YV7BjsyHQEyfeqU=@smp3.adminforge.de",
+      "smp://JBPzhoYceX_5Whpk5udGO8arTdXNDF2vi0SD0yQQWfI=@smp2.taurix.net",
+      "smp://t10qBxn155jIZ2zLjQjftyVbh6YkPaR7-hx31y9or5E=@agorist.space",
+      "smp://h4MewB8U5RQCbzAPSPlCgd47MlhBtQhYeP4Bc5YZs3U=@smp1.asriyan.me",
+      "smp://TJ9GHw4Kd9a9xv2zLrEzgmCHdmamgo47vdH0hsROPkE=@smp2.adminforge.de",
+    ]
+
+communityXFTPServers :: [NewUserServer 'PXFTP]
+communityXFTPServers =
+  map
+    (presetServer True)
+    [
+      "xftp://v6P3u9_CPYcgoA79e6tHinywTuzxb6RR6hrSaHrlhzY=@5.78.46.41:5224",
+      "xftp://__t00f17zicHnk2E8n5-AI-YYxQB5sWCY2oYw2m9ZUg=@xftp2.adminforge.de:4433",
+      "xftp://AWABqefHjQUQoZ7E788k8Y8hH4BPiPqPqCwQzxlvMCQ=@xftp1.adminforge.de:4433",
+      "xftp://RmY2xMokrLtXjoqSMeutFjbWm9zDiNOHTmhD7mBHcOE=@xftp3.adminforge.de:4433",
+    ]
 
 simplexChatSMPServers :: [NewUserServer 'PSMP]
 simplexChatSMPServers =
