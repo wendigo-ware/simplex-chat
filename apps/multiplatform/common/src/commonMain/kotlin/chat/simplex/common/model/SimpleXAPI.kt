@@ -4586,7 +4586,7 @@ enum class TransportSessionMode {
   @SerialName("entity") Entity;
 
   companion object {
-    val default = Session
+    val default = Server
     val safeValues = arrayOf(User, Session, Server)
   }
 }
