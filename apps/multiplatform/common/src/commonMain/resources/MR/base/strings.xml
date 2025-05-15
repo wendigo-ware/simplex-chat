@@ -883,7 +883,7 @@
   <string name="use_simplex_chat_servers__question">Use SimpleX Chat servers?</string>
   <string name="your_SMP_servers">Your SMP servers</string>
   <string name="your_XFTP_servers">Your XFTP servers</string>
-  <string name="using_simplex_chat_servers">Using SimpleX Chat servers.</string>
+  <string name="using_simplex_chat_servers">Using community servers.</string>
   <string name="how_to">How to</string>
   <string name="how_to_use_your_servers">How to use your servers</string>
   <string name="saved_ICE_servers_will_be_removed">Saved WebRTC ICE servers will be removed.</string>

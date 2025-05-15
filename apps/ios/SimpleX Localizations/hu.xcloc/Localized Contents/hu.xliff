@@ -8372,8 +8372,8 @@ A kapcsolódáshoz kérje meg a partnerét, hogy hozzon létre egy másik kapcso
         <target>Felhasználónév</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve">
+        <source>Using community servers.</source>
         <target>SimpleX Chat-kiszolgálók használatban.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>

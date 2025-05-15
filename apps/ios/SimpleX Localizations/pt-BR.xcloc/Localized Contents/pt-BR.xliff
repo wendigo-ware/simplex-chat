@@ -3230,8 +3230,8 @@ Para se conectar, peça ao seu contato para criar outro link de conexão e verif
         <source>Using .onion hosts requires compatible VPN provider.</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve">
+        <source>Using community servers.</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Verify connection security" xml:space="preserve" approved="no">

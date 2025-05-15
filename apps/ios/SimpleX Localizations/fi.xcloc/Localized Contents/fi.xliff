@@ -7599,8 +7599,8 @@ Jos haluat muodostaa yhteyden, pyydä kontaktiasi luomaan toinen yhteyslinkki ja
         <source>Username</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve">
+        <source>Using community servers.</source>
         <target>Käyttää SimpleX Chat -palvelimia.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>

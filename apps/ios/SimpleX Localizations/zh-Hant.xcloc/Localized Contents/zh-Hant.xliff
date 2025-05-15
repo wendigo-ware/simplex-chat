@@ -3276,8 +3276,8 @@ To connect, please ask your contact to create another connection link and check 
         <target state="translated">使用 .onion 主機需要兼容 VPN 的提供者。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve" approved="no">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve" approved="no">
+        <source>Using community servers.</source>
         <target state="translated">使用 SimpleX Chat 伺服器。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>

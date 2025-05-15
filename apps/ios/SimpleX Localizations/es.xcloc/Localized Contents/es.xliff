@@ -8372,8 +8372,8 @@ Para conectarte pide a tu contacto que cree otro enlace y comprueba la conexión
         <target>Nombre de usuario</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve">
+        <source>Using community servers.</source>
         <target>Usar servidores SimpleX Chat.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>

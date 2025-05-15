@@ -82,9 +82,11 @@ final class WebRTCClient: NSObject, RTCVideoViewDelegate, RTCFrameEncryptorDeleg
     }
 
     let defaultIceServers: [WebRTC.RTCIceServer] = [
-        WebRTC.RTCIceServer(urlStrings: ["stuns:stun.simplex.im:443"]),
-        //WebRTC.RTCIceServer(urlStrings: ["turns:turn.simplex.im:443?transport=udp"], username: "private2", credential: "Hxuq2QxUjnhj96Zq2r4HjqHRj"),
-        WebRTC.RTCIceServer(urlStrings: ["turns:turn.simplex.im:443?transport=tcp"], username: "private2", credential: "Hxuq2QxUjnhj96Zq2r4HjqHRj"),
+        WebRTC.RTCIceServer(urlStrings: ["stun:adminforge.de:3478"]),
+        WebRTC.RTCIceServer(urlStrings: ["stun:disroot.org:3478"]),
+        WebRTC.RTCIceServer(urlStrings: ["stun:turn.envs.net:3478"]),
+        WebRTC.RTCIceServer(urlStrings: ["stun:danwin1210.de:3478"]),
+        WebRTC.RTCIceServer(urlStrings: ["stun:matrix.grin.hu:3478"]),
     ]
 
     func initializeCall(_ iceServers: [WebRTC.RTCIceServer]?, _ mediaType: CallMediaType, _ aesKey: String?, _ relay: Bool?) -> Call {

@@ -7622,8 +7622,8 @@ Chcete-li se připojit, požádejte svůj kontakt o vytvoření dalšího odkazu
         <source>Username</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
-      <trans-unit id="Using SimpleX Chat servers." xml:space="preserve">
-        <source>Using SimpleX Chat servers.</source>
+      <trans-unit id="Using community servers." xml:space="preserve">
+        <source>Using community servers.</source>
         <target>Používat servery SimpleX Chat.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>

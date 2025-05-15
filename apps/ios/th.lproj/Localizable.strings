@@ -2998,7 +2998,7 @@ chat item action */
 "Use SimpleX Chat servers?" = "ใช้เซิร์ฟเวอร์ SimpleX Chat ไหม?";
 
 /* No comment provided by engineer. */
-"Using SimpleX Chat servers." = "กำลังใช้เซิร์ฟเวอร์ SimpleX Chat อยู่";
+"Using community servers." = "กำลังใช้เซิร์ฟเวอร์ community อยู่";
 
 /* No comment provided by engineer. */
 "v%@ (%@)" = "v%@ (%@)";

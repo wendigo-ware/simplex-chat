@@ -53,7 +53,7 @@ struct RTCServers: View {
                 Text("")
             } footer: {
                 if !isUserRTCServers {
-                    Text("Using SimpleX Chat servers.")
+                    Text("Using community servers.")
                         .foregroundColor(theme.colors.secondary)
                 }
             }

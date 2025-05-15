@@ -5293,7 +5293,7 @@ report reason */
 "Username" = "Имя пользователя";
 
 /* No comment provided by engineer. */
-"Using SimpleX Chat servers." = "Используются серверы, предоставленные SimpleX Chat.";
+"Using community servers." = "Используются серверы, предоставленные community.";
 
 /* No comment provided by engineer. */
 "v%@" = "v%@";

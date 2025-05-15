@@ -3286,7 +3286,7 @@ chat item action */
 "Use SimpleX Chat servers?" = "SimpleX チャット サーバーを使用しますか?";
 
 /* No comment provided by engineer. */
-"Using SimpleX Chat servers." = "SimpleX チャット サーバーを使用する。";
+"Using community servers." = "Community チャット サーバーを使用する。";
 
 /* No comment provided by engineer. */
 "v%@ (%@)" = "v%@ (%@)";
