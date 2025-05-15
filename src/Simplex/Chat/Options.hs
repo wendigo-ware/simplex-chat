@@ -143,7 +143,7 @@ coreChatOptsP appDir defaultDbName = do
         strParse
         ( long "smp-proxy"
             <> metavar "SMP_PROXY_MODE"
-            <> help "Use private message routing: always, unknown (default), unprotected, never"
+            <> help "Use private message routing: always (default), unknown, unprotected, never"
         )
   smpProxyFallback_ <-
     optional $
@@ -151,7 +151,7 @@ coreChatOptsP appDir defaultDbName = do
         strParse
         ( long "smp-proxy-fallback"
             <> metavar "SMP_PROXY_FALLBACK_MODE"
-            <> help "Allow downgrade and connect directly: no, [when IP address is] protected (default), yes"
+            <> help "Allow downgrade and connect directly: no (default), [when IP address is] protected, yes"
         )
   smpWebPort <-
     switch

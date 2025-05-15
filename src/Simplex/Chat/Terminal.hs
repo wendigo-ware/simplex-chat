@@ -9,7 +9,7 @@ module Simplex.Chat.Terminal where
 
 import Control.Monad
 import qualified Data.List.NonEmpty as L
-import Simplex.Chat (defaultChatConfig, operatorSimpleXChat)
+import Simplex.Chat (defaultChatConfig, operatorCommunity)
 import Simplex.Chat.Controller
 import Simplex.Chat.Core
 import Simplex.Chat.Help (chatWelcome)
@@ -39,13 +39,15 @@ terminalChatConfig =
         PresetServers
           { operators =
               [ PresetOperator
-                  { operator = Just operatorSimpleXChat,
+                  { operator = Just operatorCommunity,
                     smp =
                       map
                         (presetServer True)
-                        [ "smp://u2dS9sG8nMNURyZwqASV4yROM28Er0luVTx5X1CsMrU=@smp4.simplex.im,o5vmywmrnaxalvz6wi3zicyftgio6psuvyniis6gco6bp6ekl4cqj4id.onion",
-                          "smp://hpq7_4gGJiilmz5Rf-CswuU5kZGkm_zOIooSw6yALRg=@smp5.simplex.im,jjbyvoemxysm7qxap7m5d5m35jzv5qq6gnlv7s4rsn7tdwwmuqciwpid.onion",
-                          "smp://PQUV2eL0t7OStZOoAsPEV2QYWt4-xilbakvGUGOItUo=@smp6.simplex.im,bylepyau3ty4czmn77q4fglvperknl4bi2eb2fdy2bh4jxtf32kf73yd.onion"
+                        [
+			  "smp://uDH4cu81seeKT_rnrLMprQ6jwsnHY12awH8JP0gfIfc=@154.26.139.40",
+			  "smp://HZOF26feHaaMXqYuLTzhBFB652DEYENZEN8zpLxIeKs=@simplex.notrustverify.ch",
+			  "smp://t10qBxn155jIZ2zLjQjftyVbh6YkPaR7-hx31y9or5E=@agorist.space",
+			  "smp://L5jrGV2L_Bb20Oj0aE4Gn-m5AHet9XdpYDotiqpcpGc=@nowhere.moe",
                         ],
                     useSMP = 3,
                     xftp = map (presetServer True) $ L.toList defaultXFTPServers,
@@ -55,8 +57,11 @@ terminalChatConfig =
             ntf = _defaultNtfServers,
             netCfg =
               defaultNetworkConfig
-                { smpProxyMode = SPMUnknown,
-                  smpProxyFallback = SPFAllowProtected
+                {
+		  -- Defaults changed: can't find where these are defined, so I
+		  -- guessed! This might break something, especially second one.
+		  smpProxyMode = SPMAlways,
+                  smpProxyFallback = SPFNo
                 }
           },
       deviceNameForRemote = "SimpleX CLI"

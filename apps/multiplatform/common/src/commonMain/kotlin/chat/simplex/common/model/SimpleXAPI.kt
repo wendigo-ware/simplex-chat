@@ -4456,7 +4456,7 @@ data class NetCfg(
   val requiredHostMode: Boolean = false,
   val sessionMode: TransportSessionMode = TransportSessionMode.default,
   val smpProxyMode: SMPProxyMode = SMPProxyMode.Always,
-  val smpProxyFallback: SMPProxyFallback = SMPProxyFallback.AllowProtected,
+  val smpProxyFallback: SMPProxyFallback = SMPProxyFallback.Prohibit,
   val smpWebPort: Boolean = false,
   val tcpConnectTimeout: Long, // microseconds
   val tcpTimeout: Long, // microseconds
