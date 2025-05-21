@@ -105,7 +105,7 @@ class AppPreferences {
   val webrtcIceServers = mkStrPreference(SHARED_PREFS_WEBRTC_ICE_SERVERS, null)
   val privacyProtectScreen = mkBoolPreference(SHARED_PREFS_PRIVACY_PROTECT_SCREEN, true)
   val privacyAcceptImages = mkBoolPreference(SHARED_PREFS_PRIVACY_ACCEPT_IMAGES, true)
-  val privacyLinkPreviews = mkBoolPreference(SHARED_PREFS_PRIVACY_LINK_PREVIEWS, true)
+  val privacyLinkPreviews = mkBoolPreference(SHARED_PREFS_PRIVACY_LINK_PREVIEWS, false)
   val privacyChatListOpenLinks = mkEnumPreference(SHARED_PREFS_PRIVACY_CHAT_LIST_OPEN_LINKS, PrivacyChatListOpenLinksMode.ASK) { PrivacyChatListOpenLinksMode.values().firstOrNull { it.name == this } }
   private val _simplexLinkMode = mkStrPreference(SHARED_PREFS_PRIVACY_SIMPLEX_LINK_MODE, SimplexLinkMode.default.name)
   val simplexLinkMode: SharedPreference<SimplexLinkMode> = SharedPreference(
@@ -7355,14 +7355,14 @@ data class AppSettings(
         privacyEncryptLocalFiles = true,
         privacyAskToApproveRelays = true,
         privacyAcceptImages = true,
-        privacyLinkPreviews = true,
+        privacyLinkPreviews = false,
         privacyChatListOpenLinks = PrivacyChatListOpenLinksMode.ASK,
         privacyShowChatPreviews = true,
         privacySaveLastDraft = true,
         privacyProtectScreen = false,
         privacyMediaBlurRadius = 0,
         notificationMode = AppSettingsNotificationMode.INSTANT,
-        notificationPreviewMode = AppSettingsNotificationPreviewMode.MESSAGE,
+        notificationPreviewMode = AppSettingsNotificationPreviewMode.CONTACT,
         webrtcPolicyRelay = true,
         webrtcICEServers = emptyList(),
         confirmRemoteSessions = false,
@@ -7462,7 +7462,7 @@ enum class AppSettingsNotificationPreviewMode {
     }
 
   companion object {
-    val default: AppSettingsNotificationPreviewMode = MESSAGE
+    val default: AppSettingsNotificationPreviewMode = CONTACT
 
     fun from(mode: NotificationPreviewMode): AppSettingsNotificationPreviewMode =
       when (mode) {

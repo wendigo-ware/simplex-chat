@@ -2844,7 +2844,7 @@ public struct AppSettings: Codable, Equatable {
             privacyEncryptLocalFiles: true,
             privacyAskToApproveRelays: true,
             privacyAcceptImages: true,
-            privacyLinkPreviews: true,
+            privacyLinkPreviews: false,
             privacyChatListOpenLinks: .ask,
             privacyShowChatPreviews: true,
             privacySaveLastDraft: true,
