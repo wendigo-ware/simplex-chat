@@ -137,7 +137,7 @@ suspend fun initChatController(useKey: String? = null, confirmMigrations: Migrat
       }
     }
     if (user == null) {
-      chatModel.controller.appPrefs.privacyDeliveryReceiptsSet.set(true)
+      chatModel.controller.appPrefs.privacyDeliveryReceiptsSet.set(false)
       chatModel.currentUser.value = null
       chatModel.users.clear()
       if (appPlatform.isDesktop) {

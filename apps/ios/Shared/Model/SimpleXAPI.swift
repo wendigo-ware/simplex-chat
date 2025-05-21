@@ -1744,7 +1744,7 @@ func initializeChat(start: Bool, confirmStart: Bool = false, dbKey: String? = ni
     }
     if m.currentUser == nil {
         onboardingStageDefault.set(.step1_SimpleXInfo)
-        privacyDeliveryReceiptsSet.set(true)
+        privacyDeliveryReceiptsSet.set(false)
         m.onboardingStage = .step1_SimpleXInfo
     } else if confirmStart {
         showStartChatAfterRestartAlert { start in
@@ -1812,7 +1812,7 @@ func startChat(refreshInvitations: Bool = true, onboarding: Bool = false) throws
                 ? .step3_ChooseServerOperators
                 : savedOnboardingStage
                 if m.onboardingStage == .onboardingComplete && !privacyDeliveryReceiptsSet.get() {
-                    m.setDeliveryReceipts = true
+                    m.setDeliveryReceipts = false
                 }
             }
         }

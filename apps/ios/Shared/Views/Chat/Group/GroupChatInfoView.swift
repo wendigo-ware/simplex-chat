@@ -27,8 +27,8 @@ struct GroupChatInfoView: View {
     @State private var addMembersNavLinkActive: Bool = false
     @State private var connectionStats: ConnectionStats?
     @State private var connectionCode: String?
-    @State private var sendReceipts = SendReceipts.userDefault(true)
-    @State private var sendReceiptsUserDefault = true
+    @State private var sendReceipts = SendReceipts.userDefault(false)
+    @State private var sendReceiptsUserDefault = false
     @State private var progressIndicator = false
     @AppStorage(DEFAULT_DEVELOPER_TOOLS) private var developerTools = false
     @State private var searchText: String = ""

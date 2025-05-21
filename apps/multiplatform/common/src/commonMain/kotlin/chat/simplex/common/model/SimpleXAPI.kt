@@ -540,7 +540,7 @@ object ChatController {
         startReceiver()
         setLocalDeviceName(appPrefs.deviceNameForRemoteAccess.get()!!)
         if (appPreferences.onboardingStage.get() == OnboardingStage.OnboardingComplete && !chatModel.controller.appPrefs.privacyDeliveryReceiptsSet.get()) {
-          chatModel.setDeliveryReceipts.value = true
+          chatModel.setDeliveryReceipts.value = false
         }
         Log.d(TAG, "startChat: started")
       } else {

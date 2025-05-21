@@ -127,8 +127,8 @@ createUserRecordAt db (AgentUserId auId) Profile {displayName, fullName, image, 
   checkConstraint SEDuplicateName . liftIO $ do
     when activeUser $ DB.execute_ db "UPDATE users SET active_user = 0"
     let showNtfs = True
-        sendRcptsContacts = True
-        sendRcptsSmallGroups = True
+        sendRcptsContacts = False
+        sendRcptsSmallGroups = False
     order <- getNextActiveOrder db
     DB.execute
       db
