@@ -2883,14 +2883,11 @@ processChatCommand' vr = \case
     delGroupChatItems :: User -> GroupInfo -> [CChatItem 'CTGroup] -> Bool -> CM ChatResponse
     delGroupChatItems user gInfo@GroupInfo {membership} items moderation = do
       deletedTs <- liftIO getCurrentTime
-      when moderation $ do
-        -- Not gonna lie, I don't understand Haskell well enough to 100%
-	-- understand what the next line is doing... But I'm gonna comment it
-	-- out and see if it breaks something I didn't mean to break. (I'm only
-	-- trying to break reporting, so markMessageReportsDeleted is no longer
-	-- defined.)
-        --ciIds <- concat <$> withStore' (\db -> forM items $ \(CChatItem _ ci) -> markMessageReportsDeleted db user gInfo ci membership deletedTs)
-        unless (null ciIds) $ toView $ CRGroupChatItemsDeleted user gInfo ciIds True (Just membership)
+      -- Reporting removed: I'll be honest, I don't 100% understand what the
+      -- following does. But I don't *think* we need it at all now?
+      --when moderation $ do
+      --  ciIds <- concat <$> withStore' (\db -> forM items $ \(CChatItem _ ci) -> markMessageReportsDeleted db user gInfo ci membership deletedTs)
+      --  unless (null ciIds) $ toView $ CRGroupChatItemsDeleted user gInfo ciIds True (Just membership)
       let m = if moderation then Just membership else Nothing
       if groupFeatureMemberAllowed SGFFullDelete membership gInfo
         then deleteGroupCIs user gInfo items True False m deletedTs

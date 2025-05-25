@@ -64,8 +64,8 @@ module Simplex.Chat.Store.Messages
     markMemberCIsDeleted,
     markGroupChatItemBlocked,
     markGroupCIBlockedByAdmin,
-    --markMessageReportsDeleted,
-    --markReceivedGroupReportsDeleted,
+    -- markMessageReportsDeleted,
+    -- markReceivedGroupReportsDeleted,
     deleteLocalChatItem,
     updateDirectChatItemsRead,
     getDirectUnreadTimedItems,
@@ -456,9 +456,9 @@ createNewChatItem_ db User {userId} chatDirection notInHistory_ msgId_ sharedMsg
     includeInHistory :: Bool
     includeInHistory =
       let (_, groupId_, _, _) = idsRow
-       --in isJust groupId_ && isNothing notInHistory_ && isJust (ciMsgContent ciContent) && ((msgContentTag <$> ciMsgContent ciContent) /= Just MCReport_)
-       -- Content report related condition no longer necessary
-       in isJust groupId_ && isNothing notInHistory_ && isJust (ciMsgContent ciContent)
+       in -- in isJust groupId_ && isNothing notInHistory_ && isJust (ciMsgContent ciContent) && ((msgContentTag <$> ciMsgContent ciContent) /= Just MCReport_)
+          -- Content report related condition no longer necessary
+          isJust groupId_ && isNothing notInHistory_ && isJust (ciMsgContent ciContent)
     forwardedFromRow :: (Maybe CIForwardedFromTag, Maybe Text, Maybe MsgDirection, Maybe Int64, Maybe Int64, Maybe Int64)
     forwardedFromRow = case itemForwarded of
       Nothing ->
@@ -580,17 +580,17 @@ data ChatPreviewData (c :: ChatType) where
 
 data AChatPreviewData = forall c. ChatTypeI c => ACPD (SChatType c) (ChatPreviewData c)
 
-type ChatStatsRow = (Int, Int, ChatItemId, BoolInt)
+type ChatStatsRow = (Int, ChatItemId, BoolInt)
 
 toChatStats :: ChatStatsRow -> ChatStats
---toChatStats (unreadCount, reportsCount, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions = 0, reportsCount, minUnreadItemId, unreadChat}
+-- toChatStats (unreadCount, reportsCount, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions = 0, reportsCount, minUnreadItemId, unreadChat}
 -- reportsCount no longer necessary
 toChatStats (unreadCount, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions = 0, minUnreadItemId, unreadChat}
 
-type GroupStatsRow = (Int, Int, Int, ChatItemId, BoolInt)
+type GroupStatsRow = (Int, Int, ChatItemId, BoolInt)
 
 toGroupStats :: GroupStatsRow -> ChatStats
---toGroupStats (unreadCount, unreadMentions, reportsCount, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat}
+-- toGroupStats (unreadCount, unreadMentions, reportsCount, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat}
 -- reportsCount no longer necessary
 toGroupStats (unreadCount, unreadMentions, minUnreadItemId, BI unreadChat) = ChatStats {unreadCount, unreadMentions, minUnreadItemId, unreadChat}
 
@@ -733,7 +733,7 @@ findGroupChatPreviews_ db User {userId} pagination clq =
 	-- ReportCount no longer necessary
         )
       |]
-    --baseParams = (userId, userId, CISRcvNew, userId, MCReport_, BI False)
+    -- baseParams = (userId, userId, CISRcvNew, userId, MCReport_, BI False)
     -- MCReport_ no longer necessary
     baseParams = (userId, userId, CISRcvNew, userId, BI False)
     getPreviews = case clq of
@@ -1384,8 +1384,8 @@ getGroupChatInitial_ db user g contentFilter count = do
       (,Just $ NavigationInfo 0 0) <$> getGroupChatLast_ db user g contentFilter count "" stats
   where
     getStats minUnreadItemId (unreadCount, unreadMentions) = do
-      --reportsCount <- getGroupReportsCount_ db user g False
-      --pure ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat = False}
+      -- reportsCount <- getGroupReportsCount_ db user g False
+      -- pure ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat = False}
       -- reportsCount no longer necessary
       pure ChatStats {unreadCount, unreadMentions, minUnreadItemId, unreadChat = False}
 
@@ -1393,8 +1393,8 @@ getGroupStats_ :: DB.Connection -> User -> GroupInfo -> IO ChatStats
 getGroupStats_ db user g = do
   minUnreadItemId <- fromMaybe 0 <$> getGroupMinUnreadId_ db user g Nothing
   (unreadCount, unreadMentions) <- getGroupUnreadCount_ db user g Nothing
-  --reportsCount <- getGroupReportsCount_ db user g False
-  --pure ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat = False}
+  -- reportsCount <- getGroupReportsCount_ db user g False
+  -- pure ChatStats {unreadCount, unreadMentions, reportsCount, minUnreadItemId, unreadChat = False}
   -- reportsCount no longer necessary
   pure ChatStats {unreadCount, unreadMentions, minUnreadItemId, unreadChat = False}
 
@@ -1412,8 +1412,8 @@ getGroupUnreadCount_ db user g contentFilter =
   where
     baseQuery = "SELECT COUNT(1), COALESCE(SUM(user_mention), 0) FROM chat_items WHERE user_id = ? AND group_id = ? "
 
---getGroupReportsCount_ :: DB.Connection -> User -> GroupInfo -> Bool -> IO Int
---getGroupReportsCount_ db User {userId} GroupInfo {groupId} archived =
+-- getGroupReportsCount_ :: DB.Connection -> User -> GroupInfo -> Bool -> IO Int
+-- getGroupReportsCount_ db User {userId} GroupInfo {groupId} archived =
 --  fromOnly . head
 --    <$> DB.query
 --      db
@@ -2506,8 +2506,8 @@ markGroupCIBlockedByAdmin db User {userId} GroupInfo {groupId} ci@ChatItem {meta
     (DBCIBlockedByAdmin, deletedTs, deletedTs, userId, groupId, chatItemId' ci)
   pure ci {meta = meta {itemDeleted = Just $ CIBlockedByAdmin $ Just deletedTs, editable = False, deletable = False}}
 
---markMessageReportsDeleted :: DB.Connection -> User -> GroupInfo -> ChatItem 'CTGroup d -> GroupMember -> UTCTime -> IO [ChatItemId]
---markMessageReportsDeleted db User {userId} GroupInfo {groupId} ChatItem {meta = CIMeta {itemSharedMsgId}} GroupMember {groupMemberId} deletedTs = do
+-- markMessageReportsDeleted :: DB.Connection -> User -> GroupInfo -> ChatItem 'CTGroup d -> GroupMember -> UTCTime -> IO [ChatItemId]
+-- markMessageReportsDeleted db User {userId} GroupInfo {groupId} ChatItem {meta = CIMeta {itemSharedMsgId}} GroupMember {groupMemberId} deletedTs = do
 --  currentTs <- liftIO getCurrentTime
 --  map fromOnly
 --    <$> DB.query
@@ -2520,8 +2520,8 @@ markGroupCIBlockedByAdmin db User {userId} GroupInfo {groupId} ci@ChatItem {meta
 --      |]
 --      (DBCIDeleted, deletedTs, groupMemberId, currentTs, userId, groupId, MCReport_, itemSharedMsgId, DBCINotDeleted)
 
---markReceivedGroupReportsDeleted :: DB.Connection -> User -> GroupInfo -> UTCTime -> IO [ChatItemId]
---markReceivedGroupReportsDeleted db User {userId} GroupInfo {groupId, membership} deletedTs = do
+-- markReceivedGroupReportsDeleted :: DB.Connection -> User -> GroupInfo -> UTCTime -> IO [ChatItemId]
+-- markReceivedGroupReportsDeleted db User {userId} GroupInfo {groupId, membership} deletedTs = do
 --  currentTs <- liftIO getCurrentTime
 --  map fromOnly
 --    <$> DB.query
@@ -2816,7 +2816,7 @@ getChatRefViaItemId db User {userId} itemId = do
 
 getAChatItem :: DB.Connection -> VersionRangeChat -> User -> ChatRef -> ChatItemId -> ExceptT StoreError IO AChatItem
 getAChatItem db vr user chatRef itemId = do
-  aci <- case chatRef of
+  acpi <- case chatRef of
     ChatRef CTDirect contactId -> do
       ct <- getContact db vr user contactId
       (CChatItem msgDir ci) <- getDirectChatItem db user contactId itemId
@@ -2830,7 +2830,7 @@ getAChatItem db vr user chatRef itemId = do
       CChatItem msgDir ci <- getLocalChatItem db user folderId itemId
       pure $ AChatItem SCTLocal msgDir (LocalChat nf) ci
     _ -> throwError $ SEChatItemNotFound itemId
-  liftIO $ getACIReactions db aci
+  liftIO $ getACIReactions db acpi
 
 getAChatItemBySharedMsgId :: ChatTypeQuotable c => DB.Connection -> User -> ChatDirection c 'MDRcv -> SharedMsgId -> ExceptT StoreError IO AChatItem
 getAChatItemBySharedMsgId db user cd sharedMsgId = case cd of
@@ -2915,7 +2915,7 @@ getGroupCIMentions db ciId =
        in (name, CIMention {memberId, memberRef})
 
 getACIReactions :: DB.Connection -> AChatItem -> IO AChatItem
-getACIReactions db aci@(AChatItem _ md chat ci@ChatItem {meta = CIMeta {itemSharedMsgId}}) = case itemSharedMsgId of
+getACIReactions db acpi@(AChatItem _ md chat ci@ChatItem {meta = CIMeta {itemSharedMsgId}}) = case itemSharedMsgId of
   Just itemSharedMId -> case chat of
     DirectChat ct -> do
       reactions <- getDirectCIReactions db ct itemSharedMId
@@ -2924,8 +2924,8 @@ getACIReactions db aci@(AChatItem _ md chat ci@ChatItem {meta = CIMeta {itemShar
       let GroupMember {memberId} = chatItemMember g ci
       reactions <- getGroupCIReactions db g memberId itemSharedMId
       pure $ AChatItem SCTGroup md chat ci {reactions}
-    _ -> pure aci
-  _ -> pure aci
+    _ -> pure acpi
+  _ -> pure acpi
 
 deleteDirectCIReactions_ :: DB.Connection -> ContactId -> ChatItem 'CTDirect d -> IO ()
 deleteDirectCIReactions_ db contactId ChatItem {meta = CIMeta {itemSharedMsgId}} =
